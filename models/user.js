@@ -3,60 +3,60 @@ const mongoose = require("mongoose");
 
 //defining a model
 const User = mongoose.model(
-  "Users",
-  new mongoose.Schema({
-    firstName: {
-      type: String,
-      required: true,
-      minlength: 3,
-      maxlength: 25,
-      lowercase: true,
+  "users",
+  new mongoose.Schema(
+    {
+      firstName: {
+        type: String,
+        required: true,
+        minlength: 3,
+        maxlength: 25,
+        lowercase: true,
+      },
+      lastName: {
+        type: String,
+        required: true,
+        minlength: 3,
+        maxlength: 25,
+        lowercase: true,
+      },
+      email: { type: String, required: true, maxlength: 64, lowercase: true },
+      password: { type: String, required: true, minlength: 10, maxlength: 255 },
+      username: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: 4,
+        maxlength: 25,
+        lowercase: true,
+      },
+      accountType: { type: String, required: true, enum: ["seller", "buyer"] },
+      avatar: { type: String, default: null },
+      isEmailVerified: { type: Boolean, default: false },
+      isVerified: { type: Boolean, default: false },
+      isActive: { type: Boolean, default: true },
     },
-    lastName: {
-      type: String,
-      required: true,
-      minlength: 3,
-      maxlength: 25,
-      lowercase: true,
-    },
-    email: { type: String, required: true, maxlength: 64, lowercase: true },
-    password: { type: String, required: true, minlength: 10, maxlength: 255 },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      minlength: 4,
-      maxlength: 25,
-      lowercase: true,
-    },
-    accountType: { type: String, required: true, enum: ["seller", "buyer"] },
-    avatar: { type: String },
-    isEmailVerified: { type: Boolean },
-    isVerified: { type: Boolean },
-    isActive: { type: Boolean },
-    createAt: { type: Date },
-    updatedAt: { type: Date },
-  })
+    { timestamps: true }
+  )
 );
 
 //User schema validation method to validate incoming data
 const validateUser = (user) => {
-  const schema = {
-    firstName: Joi.string().minlength(3).maxlength(25).required(),
-    lastName: Joi.string().minlength(3).maxlength(25).required(),
-    email: Joi.string().email().maxlength(64).required(),
-    password: Joi.string().minlength(10).maxlength(255).required(),
-    username: Joi.string().minlength(4).maxlength(25).required(),
-    accountType: Joi.string().required(),
-    avatar: Joi.string(),
-    isEmailVerified: Joi.boolean.required(),
-    isVerified: Joi.boolean.required(),
-    isActive: Joi.boolean.required(),
-    createdAt: Joi.date().timestamp().required(),
-    updatedAt: Joi.date().timestamp().required(),
-  };
+  console.log(user);
+  const schema = Joi.object({
+    firstName: Joi.string().min(3).max(25).required(),
+    lastName: Joi.string().min(3).max(25).required(),
+    email: Joi.string().email().max(64).required(),
+    password: Joi.string().min(10).max(255),
+    username: Joi.string().min(4).max(25).required(),
+    accountType: Joi.string(),
+    // avatar: Joi.string(),
+    // isEmailVerified: Joi.boolean,
+    // isVerified: Joi.boolean,
+    // isActive: Joi.boolean,
+  });
 
-  return Joi.validate(user, schema);
+  return schema.validate(user);
 };
 
 //exporting

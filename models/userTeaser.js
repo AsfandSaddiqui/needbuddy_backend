@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 //defining a model
 const UserTeaser = mongoose.model(
-  "Users",
+  "users_teaser",
   new mongoose.Schema({
     username: {
       type: String,

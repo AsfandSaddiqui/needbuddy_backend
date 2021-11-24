@@ -1,4 +1,4 @@
-const winston = require("windston");
+const winston = require("winston");
 
 module.exports = function () {
   //add logging logic here
@@ -10,9 +10,9 @@ module.exports = function () {
     new winston.transports.File({ filename: "uncaughtExceptions.log" })
   );
 
-  process.on("unhandleRejections", (ex) => {
+  process.on("unhandleRejection", (ex) => {
     throw ex;
   });
 
-  winston.add(winston.transports.File({ filename: "logfile.log" }));
+  winston.add(winston.transports.File, { filename: "logfile.log" });
 };
