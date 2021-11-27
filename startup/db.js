@@ -9,15 +9,3 @@ module.exports = function () {
     console.log("connected ");
   });
 };
-
-// mongoose
-// .connect(db, {
-//   useNewUrlParser: true,
-//   useCreateIndex: true,
-//   useFindAndModify: false,
-//   useUnifiedTopology: true,
-// })
-// .then(console.log("connected Successfully"))
-// .catch((error) => {
-//   console.log(error.message);
-// });

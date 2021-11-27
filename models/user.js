@@ -42,7 +42,6 @@ const User = mongoose.model(
 
 //User schema validation method to validate incoming data
 const validateUser = (user) => {
-  console.log(user);
   const schema = Joi.object({
     firstName: Joi.string().min(3).max(25).required(),
     lastName: Joi.string().min(3).max(25).required(),
@@ -50,10 +49,10 @@ const validateUser = (user) => {
     password: Joi.string().min(10).max(255),
     username: Joi.string().min(4).max(25).required(),
     accountType: Joi.string(),
-    // avatar: Joi.string(),
-    // isEmailVerified: Joi.boolean,
-    // isVerified: Joi.boolean,
-    // isActive: Joi.boolean,
+    avatar: Joi.string(),
+    isEmailVerified: Joi.boolean,
+    isVerified: Joi.boolean,
+    isActive: Joi.boolean,
   });
 
   return schema.validate(user);
