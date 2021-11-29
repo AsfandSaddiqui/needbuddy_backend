@@ -30,10 +30,40 @@ const User = mongoose.model(
         maxlength: 25,
         lowercase: true,
       },
-      accountType: { type: String, required: true, enum: ["seller", "buyer"] },
+      address: {
+        type: String,
+        minlength: 4,
+        maxlength: 255,
+        lowercase: true,
+        default: null,
+      },
+      city: {
+        type: String,
+        minlength: 4,
+        maxlength: 25,
+        lowercase: true,
+        default: null,
+      },
+
+      zipCode: {
+        type: Number,
+        minlength: 4,
+        maxlength: 25,
+        default: null,
+      },
+      phoneNumber: {
+        type: String,
+        minlength: 10,
+        maxlength: 11,
+        default: null,
+      },
+      accountType: {
+        type: String,
+        required: true,
+        enum: ["seller", "buyer", "admin"],
+      },
       avatar: { type: String, default: null },
       isEmailVerified: { type: Boolean, default: false },
-      isVerified: { type: Boolean, default: false },
       isActive: { type: Boolean, default: true },
     },
     { timestamps: true }
@@ -49,9 +79,12 @@ const validateUser = (user) => {
     password: Joi.string().min(10).max(255),
     username: Joi.string().min(4).max(25).required(),
     accountType: Joi.string(),
+    address: Joi.string().max(255),
+    city: Joi.string().min(4).max(25),
+    zipCode: Joi.number(),
+    phoneNumber: Joi.string().min(10).max(11),
     avatar: Joi.string(),
     isEmailVerified: Joi.boolean,
-    isVerified: Joi.boolean,
     isActive: Joi.boolean,
   });
 

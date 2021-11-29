@@ -3,6 +3,8 @@ const helmet = require("helmet");
 const cors = require("cors");
 const error = require("../middlewares/error");
 const users = require("../apis/users");
+const sellers = require("../apis/sellers");
+const jobs = require("../apis/jobs");
 const register = require("../auth/register");
 const login = require("../auth/login");
 
@@ -12,6 +14,8 @@ module.exports = function (app) {
   app.use(express.json()); //return middleware function which check if there is any json object inside req body
 
   app.use("/api/user", users);
+  app.use("/api/seller", sellers);
+  app.use("/api/job", jobs);
   app.use("/auth/register", register);
   app.use("/auth/login", login);
 

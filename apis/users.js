@@ -2,6 +2,7 @@
 const express = require("express");
 const { validate, User } = require("../models/user");
 const { validateUserTeaser, UserTeaser } = require("../models/userTeaser");
+const { verifyEmail } = require("../utils/sendEmail");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
@@ -9,6 +10,7 @@ const bcrypt = require("bcrypt");
 router.get("/", async (req, res) => {
   try {
     const users = await User.find();
+    next();
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error.message);
