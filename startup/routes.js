@@ -7,6 +7,7 @@ const sellers = require("../apis/sellers");
 const jobs = require("../apis/jobs");
 const register = require("../auth/register");
 const login = require("../auth/login");
+const emailVerify = require("../apis/emailVerify");
 
 module.exports = function (app) {
   app.use(helmet()); // it encrypt my headers which helps in preventing attacks
@@ -18,6 +19,7 @@ module.exports = function (app) {
   app.use("/api/job", jobs);
   app.use("/auth/register", register);
   app.use("/auth/login", login);
+  app.use("/verify", emailVerify);
 
   //if no middleware works it works
   app.use(error);

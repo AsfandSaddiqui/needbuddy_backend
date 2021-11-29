@@ -1,8 +1,8 @@
 //users routes defined here
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const { validate, User } = require("../models/user");
-const { validateUserTeaser, UserTeaser } = require("../models/userTeaser");
-const { verifyEmail } = require("../utils/sendEmail");
+const verifyEmail = require("../utils/sendEmail");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
@@ -10,7 +10,6 @@ const bcrypt = require("bcrypt");
 router.get("/", async (req, res) => {
   try {
     const users = await User.find();
-    next();
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error.message);
@@ -18,26 +17,41 @@ router.get("/", async (req, res) => {
 });
 
 //find a user
-router.get("/:id", (req, res) => {
-  res.status(200).send(req.params.id);
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) return res.status(404).send("No User Exist with this ID!");
+    //sendig user back
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 //update a user
-router.put("/:id", (req, res) => {
-  res.status(200).send(req.params.id);
+router.put("/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      $set: req.body,
+    });
+    if (!user) return res.status(404).send("No User Exist with this ID!");
+    //sendig user back
+    res.status(200).send("User Updated Successfully!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 //delete a user
-router.delete("/:username", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     //checking if user exist
-    const result = await User.findOne({ username: req.params.username });
-    if (!result)
-      return res.status(404).send("No User Exist with this Username!");
+    const result = await User.findOne({ _id: req.params.id });
+    if (!result) return res.status(404).send("No User Exist with this ID!");
 
     //delete user from database
     try {
-      const result = await User.deleteOne({ username: req.params.username });
+      const result = await User.deleteOne({ _id: req.params.id });
       return res.status(200).send("User deleted Successfully");
     } catch (e) {
       console.log(e.message);
@@ -46,6 +60,14 @@ router.delete("/:username", async (req, res) => {
     console.log(e.message);
   }
 });
+
+const generateToken = (username) => {
+  const token = jwt.sign({ username }, process.env.EMAIL_SECRET, {
+    expiresIn: "1h",
+  });
+  const url = `http://localhost:5000/verify/${token}`;
+  return url;
+};
 
 //create a user
 router.post("/", async (req, res) => {
@@ -74,6 +96,10 @@ router.post("/", async (req, res) => {
   //saving in database
   try {
     const result = await user.save();
+
+    const url = generateToken(user.username);
+    //closed for testing purpose
+    // if (result) verifyEmail(user.email, url);
     res.status(201).send("user created Successfully!");
   } catch (err) {
     res.status(500).send(err.message);
