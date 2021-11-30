@@ -20,7 +20,13 @@ router.post("/", async (req, res) => {
       return res.status(404).send("Invalid Username or Password");
 
     const token = jwt.sign(
-      { _id: user._id, user_type: user.accountType },
+      {
+        _id: user._id,
+        user_type: user.accountType,
+        firstName: user.firstName,
+        email: user.email,
+        isEmailVerified: user.isEmailVerified,
+      },
       process.env.JWT_KEY
     );
     res.status(200).send(token);
