@@ -2,7 +2,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const { validate, User } = require("../models/user");
-const verifyEmail = require("../utils/sendEmail");
+const { verifyEmail, passwordReset } = require("../utils/sendEmail");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
@@ -37,6 +37,36 @@ router.put("/:id", async (req, res) => {
     if (!user) return res.status(404).send("No User Exist with this ID!");
     //sendig user back
     res.status(200).send("User Updated Successfully!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+//generating token and URL for password
+const generatePasswordToken = (username) => {
+  const token = jwt.sign({ username }, process.env.EMAIL_SECRET, {
+    expiresIn: "1h",
+  });
+  const url = `https://needbuddy.herokuapp.com/reset-password/${token}`;
+  return url;
+};
+
+//update Password
+router.put("/update-password/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      $set: {
+        password: req.body.password,
+      },
+    });
+    if (!user) return res.status(404).send("No User Exist with this ID!");
+
+    const url = generatePasswordToken(user.username);
+    //closed for testing purpose
+    // if (result) passwordReset(user.email, url);
+
+    //sendig response back
+    res.status(200).send("Password Updated Successfully!");
   } catch (error) {
     res.status(500).send(error.message);
   }

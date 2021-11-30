@@ -1,6 +1,7 @@
 //users routes defined here
 const express = require("express");
 const { validate, Job } = require("../models/job");
+const { User } = require("../models/user");
 const router = express.Router();
 
 //get all users
@@ -71,7 +72,23 @@ router.post("/", async (req, res) => {
   //validating body
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-  //validaing if user already existed
+
+  const { avatar, phoneNumber, zipCode, address, city } = req.body;
+  //validates and update user record if  exist
+  try {
+    const user = await User.findByIdAndUpdate(req.body.userId, {
+      $set: {
+        avatar,
+        phoneNumber,
+        zipCode,
+        address,
+        city,
+      },
+    });
+    if (!user) return res.status(404).send("No User Exist!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 
   //creating new job
   const job = new Job({
