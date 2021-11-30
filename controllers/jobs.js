@@ -97,7 +97,7 @@ router.post("/", async (req, res) => {
     expertiseRequired: req.body.expertiseRequired,
     timeRequired: req.body.timeRequired,
     skillsRequired: req.body.skillsRequired,
-    images: req.body.images,
+    attachments: req.body.attachments,
     isActive: req.body.isActive,
     budget: req.body.budget,
     userId: req.body.userId,

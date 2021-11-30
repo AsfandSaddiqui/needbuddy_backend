@@ -15,12 +15,6 @@ const Seller = mongoose.model(
         maxlength: 1500,
       },
 
-      totalEarning: {
-        type: Number,
-      },
-      totalJobs: {
-        type: Number,
-      },
       expertise: { type: String },
       expertiseLevel: {
         type: String,
@@ -48,8 +42,11 @@ const validateSeller = (seller) => {
     expertiseLevel: Joi.string().min(6).max(20),
     skills: Joi.array(),
     badge: Joi.string().min(6).max(20),
-    totalJobs: Joi.number(),
-    totalEarning: Joi.number(),
+    address: Joi.string().max(255),
+    city: Joi.string().min(4).max(25),
+    zipCode: Joi.number(),
+    phoneNumber: Joi.string().min(10).max(11),
+    avatar: Joi.string(),
     userId: Joi.string().required(),
   });
 

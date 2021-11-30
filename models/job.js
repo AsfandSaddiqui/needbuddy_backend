@@ -41,7 +41,7 @@ const Job = mongoose.model(
           required: true,
         },
       ],
-      images: [
+      attachments: [
         {
           type: String,
           maxlength: 300,
@@ -67,9 +67,14 @@ const validateJob = (job) => {
     expertiseRequired: Joi.string().min(3).max(25).required(),
     skillsRequired: Joi.array().items(Joi.string()).required(),
     timeRequired: Joi.string().min(6).max(20).required(),
-    images: Joi.array().items(Joi.string()),
+    attachments: Joi.array().items(Joi.string()),
     isActive: Joi.string().min(6).max(20),
     budget: Joi.number().min(1).required(),
+    address: Joi.string().max(255),
+    city: Joi.string().min(4).max(25),
+    zipCode: Joi.number(),
+    phoneNumber: Joi.string().min(10).max(11),
+    avatar: Joi.string(),
     userId: Joi.required(),
   });
 
