@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //find a user
-router.get("validate-steps/:id", async (req, res) => {
+router.get("/validate-steps/:id", async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
     if (!user) return res.status(404).send("No User Exist with this ID!");
@@ -57,13 +57,30 @@ router.put("/:id", async (req, res) => {
 });
 
 //generating token and URL for password
-const generatePasswordToken = (username) => {
-  const token = jwt.sign({ username }, process.env.EMAIL_SECRET, {
+const generatePasswordToken = (email) => {
+  const token = jwt.sign({ email }, process.env.EMAIL_SECRET, {
     expiresIn: "1h",
   });
-  const url = `https://needbuddy.herokuapp.com/reset-password/${token}`;
-  return url;
+
+  return token;
 };
+
+router.post("/reset-password/:email", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email });
+    if (!user) return res.status(404).send("No User Exist with this Email!");
+
+    const token = generatePasswordToken(user._id);
+    //closed for testing purpose
+    const url = `https://needbuddy.herokuapp.com/reset-password`;
+    if (result) passwordReset(user.email, url);
+
+    //sendig response back
+    res.status(200).send(token);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 //update Password
 router.put("/update-password/:id", async (req, res) => {
@@ -74,10 +91,6 @@ router.put("/update-password/:id", async (req, res) => {
       },
     });
     if (!user) return res.status(404).send("No User Exist with this ID!");
-
-    const url = generatePasswordToken(user.username);
-    //closed for testing purpose
-    // if (result) passwordReset(user.email, url);
 
     //sendig response back
     res.status(200).send("Password Updated Successfully!");
