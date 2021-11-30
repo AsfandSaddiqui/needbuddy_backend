@@ -65,7 +65,7 @@ const generatePasswordToken = (email) => {
   return token;
 };
 
-router.post("/reset-password/:email", async (req, res) => {
+router.get("/reset-password/:email", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
     if (!user) return res.status(404).send("No User Exist with this Email!");
@@ -73,7 +73,7 @@ router.post("/reset-password/:email", async (req, res) => {
     const token = generatePasswordToken(user._id);
     //closed for testing purpose
     const url = `https://needbuddy.herokuapp.com/reset-password`;
-    if (result) passwordReset(user.email, url);
+    passwordReset(user.email, url);
 
     //sendig response back
     res.status(200).send(token);
