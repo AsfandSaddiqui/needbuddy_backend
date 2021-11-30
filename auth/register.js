@@ -1,7 +1,16 @@
 const express = require("express");
 const { validate, User } = require("../models/user");
+const { verifyEmail, passwordReset } = require("../utils/sendEmail");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+
+const generateToken = (username) => {
+  const token = jwt.sign({ username }, process.env.EMAIL_SECRET, {
+    expiresIn: "1h",
+  });
+  const url = `http://localhost:5000/verify/${token}`;
+  return url;
+};
 
 //create a user
 router.post("/", async (req, res) => {
@@ -11,7 +20,10 @@ router.post("/", async (req, res) => {
   //validaing if user already existed
   try {
     const result = await User.findOne({ username: req.body.username });
-    if (result) res.status(400).send("User Already Registerd");
+    if (result.email == req.body.email)
+      res.status(400).send("Email Already Exist!");
+
+    if (result) res.status(400).send("Username Already Exist!");
   } catch (e) {
     console.log(e.message);
   }
@@ -30,6 +42,9 @@ router.post("/", async (req, res) => {
   //saving in database
   try {
     const result = await user.save();
+    const url = generateToken(user.username);
+    //closed for testing purpose
+    // if (result) verifyEmail(user.email, url);
     res.status(201).send("user created Successfully!");
   } catch (err) {
     res.status(500).send(err.message);
