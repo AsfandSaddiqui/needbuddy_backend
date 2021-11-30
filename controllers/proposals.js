@@ -16,11 +16,13 @@ router.get("/", async (req, res) => {
   }
 });
 
-//find a job
+//find a proposal
 router.get("/:id", async (req, res) => {
   try {
-    const jobs = await Job.findOne({ _id: req.params.id }).populate("userId");
-    res.status(200).send(jobs);
+    const proposal = await Proposal.findOne({ _id: req.params.id })
+      .populate("userId")
+      .populate("sellerId");
+    res.status(200).send(proposal);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -29,38 +31,29 @@ router.get("/:id", async (req, res) => {
 //find and update a job
 router.put("/:id", async (req, res) => {
   try {
-    const jobs = await Job.updateOne(
+    const proposal = await Proposal.findByIdAndUpdate(
       { _id: req.params.id },
       {
-        $set: {
-          headline: req.body.headline,
-          description: req.body.description,
-          expertiseRequired: req.body.expertiseRequired,
-          timeRequired: req.body.timeRequired,
-          skillsRequired: req.body.skillsRequired,
-          images: req.body.images,
-          isActive: req.body.isActive,
-          budget: req.body.budget,
-        },
+        $set: req.body,
       }
     );
-    res.status(201).send("job updated Successfully!");
+    res.status(200).send("Proposal updated Successfully!");
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
 
-//delete a job
+//delete a proposal
 router.delete("/:id", async (req, res) => {
   try {
-    //checking if job exist
-    const result = await User.findOne({ username: req.params.id });
-    if (!result) return res.status(404).send("No Job Exist with this Id!");
+    //checking if proposal exist
+    const result = await User.findById(req.params.id);
+    if (!result) return res.status(404).send("No Proposal Exist with this Id!");
 
-    //delete job from database
+    //delete proposal from database
     try {
-      const result = await User.deleteOne({ username: req.params.id });
-      return res.status(200).send("Job deleted Successfully");
+      const result = await User.deleteOne({ _id: req.params.id });
+      return res.status(200).send("Proposal deleted Successfully");
     } catch (e) {
       console.log(e.message);
     }
@@ -69,24 +62,13 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-//create a job
+//create a proposal
 router.post("/", async (req, res) => {
   //validating body
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const { avatar, phoneNumber, zipCode, address, city } = req.body;
-  //validates and update user record if  exist
-  try {
-    const user = await User.findByIdAndUpdate(req.body.userId, {
-      $set: {
-        avatar,
-        phoneNumber,
-        zipCode,
-        address,
-        city,
-      },
-    });
+  
     if (!user) return res.status(404).send("No User Exist!");
   } catch (error) {
     res.status(500).send(error.message);

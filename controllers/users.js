@@ -84,10 +84,13 @@ router.get("/reset-password/:email", async (req, res) => {
 
 //update Password
 router.put("/update-password/:id", async (req, res) => {
+  const salt = await bcrypt.genSalt(10);
+  let password = await bcrypt.hash(req.body.password, salt);
+
   try {
     const user = await User.findByIdAndUpdate(req.params.id, {
       $set: {
-        password: req.body.password,
+        password,
       },
     });
     if (!user) return res.status(404).send("No User Exist with this ID!");

@@ -42,7 +42,7 @@ router.put("/:id", async (req, res) => {
         },
       }
     );
-    res.status(201).send("job updated Successfully!");
+    res.status(200).send("job updated Successfully!");
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -52,12 +52,12 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     //checking if job exist
-    const result = await User.findOne({ username: req.params.id });
+    const result = await User.findOne({ _id: req.params.id });
     if (!result) return res.status(404).send("No Job Exist with this Id!");
 
     //delete job from database
     try {
-      const result = await User.deleteOne({ username: req.params.id });
+      const result = await User.deleteOne({ _id: req.params.id });
       return res.status(200).send("Job deleted Successfully");
     } catch (e) {
       console.log(e.message);
