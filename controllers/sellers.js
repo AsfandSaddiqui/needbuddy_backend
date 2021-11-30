@@ -111,6 +111,7 @@ router.post("/", async (req, res) => {
     headline: req.body.headline,
     description: req.body.description,
     expertise: req.body.expertise,
+    expertiseLevel: req.body.expertiseLevel,
     skills: req.body.skills,
     badge: req.body.badge,
     totalJobs: req.body.totalJobs,
