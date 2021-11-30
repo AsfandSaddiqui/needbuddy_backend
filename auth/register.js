@@ -4,6 +4,7 @@ const { verifyEmail } = require("../utils/sendEmail");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
+//generate token
 const generateToken = (username) => {
   const token = jwt.sign({ username }, process.env.EMAIL_SECRET, {
     expiresIn: "1h",

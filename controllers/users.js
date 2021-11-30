@@ -136,11 +136,11 @@ router.post("/", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
   //validaing if user already existed
   try {
-    const result = await User.findOne({ username: req.body.username });
-    if (result.email == req.body.email)
-      res.status(400).send("Email Already Exist!");
+    let result = await User.findOne({ email: req.body.email });
+    if (result) return res.status(400).send("Email Already Exist!");
 
-    if (result) res.status(400).send("Username Already Exist!");
+    result = await User.findOne({ username: req.body.username });
+    if (result) return res.status(400).send("Username Already Exist!");
   } catch (e) {
     console.log(e.message);
   }
