@@ -79,8 +79,8 @@ router.delete("/:id", async (req, res) => {
 //create a seller
 router.post("/", async (req, res) => {
   //validating body
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  // const { error } = validate(req.body);
+  // if (error) return res.status(400).send(error.details[0].message);
   //validaing if seller already existed
   try {
     const result = await Seller.findOne({ userId: req.body.userId });
