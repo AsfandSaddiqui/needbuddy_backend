@@ -57,8 +57,8 @@ router.put("/:id", async (req, res) => {
 });
 
 //generating token and URL for password
-const generatePasswordToken = (email) => {
-  const token = jwt.sign({ email }, process.env.EMAIL_SECRET, {
+const generatePasswordToken = (id) => {
+  const token = jwt.sign({ id }, process.env.EMAIL_SECRET, {
     expiresIn: "1h",
   });
 
