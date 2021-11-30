@@ -21,6 +21,7 @@ const Job = mongoose.model(
         required: true,
       },
       timeRequired: { type: String, lowercase: true, required: true },
+
       expertiseRequired: {
         type: String,
         maxlength: 20,
@@ -47,19 +48,19 @@ const Job = mongoose.model(
         },
       ],
       isActive: { type: Boolean, default: true },
+
       userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true,
-        unique: true,
       },
     },
     { timestamps: true }
   )
 );
 
-//User schema validation method to validate incoming data
-const validateJob = (job) => {
+//Job schema validation method to validate incoming data
+const validateJobSetup = (job) => {
   const schema = Joi.object({
     headline: Joi.string().min(3).max(25).required(),
     description: Joi.string().min(3).max(1500).required(),
@@ -77,9 +78,27 @@ const validateJob = (job) => {
     userId: Joi.required(),
   });
 
+  return schema.validateJob(job);
+};
+
+//Job schema validation method to validate incoming data
+const validateJob = (job) => {
+  const schema = Joi.object({
+    headline: Joi.string().min(3).max(25).required(),
+    description: Joi.string().min(3).max(1500).required(),
+    expertiseRequired: Joi.string().max(25).required(),
+    skillsRequired: Joi.array().items(Joi.string()).required(),
+    timeRequired: Joi.string().min(6).max(20).required(),
+    attachments: Joi.array().items(Joi.string()),
+    isActive: Joi.string().min(6).max(20),
+    budget: Joi.number().min(1).required(),
+    userId: Joi.required(),
+  });
+
   return schema.validate(job);
 };
 
 //exporting
 exports.Job = Job;
 exports.validate = validateJob;
+exports.validateJob = validateJobSetup;

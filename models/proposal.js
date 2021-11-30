@@ -38,7 +38,6 @@ const Proposal = mongoose.model(
         type: mongoose.Schema.Types.ObjectId,
         ref: "jobs",
         required: true,
-        unique: true,
       },
     },
     { timestamps: true }

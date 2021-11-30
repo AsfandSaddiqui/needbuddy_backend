@@ -1,10 +1,10 @@
 //users routes defined here
 const express = require("express");
-const { validate, Job } = require("../models/job");
+const { validate, Job, validateJob } = require("../models/job");
 const { User } = require("../models/user");
 const router = express.Router();
 
-//get all users
+//get all jobs
 router.get("/", async (req, res) => {
   try {
     const jobs = await Job.find().populate("userId");
@@ -62,7 +62,12 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-const createJob = async (req) => {
+//create a job
+router.post("/", async (req, res) => {
+  //validating body
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
   //creating new job
   const job = new Job({
     headline: req.body.headline,
@@ -79,29 +84,16 @@ const createJob = async (req) => {
   //saving in database
   try {
     const result = await job.save();
-    return true;
+    if (result) return res.status(201).send("Job Added Successfully!");
   } catch (err) {
-    return err.message;
+    return res.status(500).send(err.message);
   }
-};
-
-//create a job
-router.post("/", async (req, res) => {
-  //validating body
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  //creating a job
-  const result = createJob(req);
-  if (result) return res.status(201).send("job created Successfully!");
-
-  res.status(500).send(result);
 });
 
-//create a job
+//create buyer steps
 router.post("/steps", async (req, res) => {
   //validating body
-  const { error } = validate(req.body);
+  const { error } = validateJob(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const { avatar, phoneNumber, zipCode, address, city } = req.body;
@@ -120,11 +112,27 @@ router.post("/steps", async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-  const result = createJob(req);
 
-  if (result) return res.status(201).send("job created Successfully!");
+  //creating new job
+  const job = new Job({
+    headline: req.body.headline,
+    description: req.body.description,
+    expertiseRequired: req.body.expertiseRequired,
+    timeRequired: req.body.timeRequired,
+    skillsRequired: req.body.skillsRequired,
+    attachments: req.body.attachments,
+    isActive: req.body.isActive,
+    budget: req.body.budget,
+    userId: req.body.userId,
+  });
 
-  res.status(500).send(result);
+  //saving in database
+  try {
+    const result = await job.save();
+    if (result) return res.status(201).send("Job Added Successfully!");
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
 });
 
 module.exports = router;
