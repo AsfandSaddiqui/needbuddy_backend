@@ -19,12 +19,19 @@ router.post("/", async (req, res) => {
     if (!validPassword)
       return res.status(404).send("Invalid Username or Password");
 
+    let isStepsComplete = false;
+
+    //checking if address is empty or not
+    if (user.address) isStepsComplete = true;
+
     const token = jwt.sign(
       {
         _id: user._id,
         user_type: user.accountType,
         firstName: user.firstName,
+        isStepsComplete: isStepsComplete,
         email: user.email,
+
         isEmailVerified: user.isEmailVerified,
       },
       process.env.JWT_KEY
