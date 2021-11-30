@@ -28,6 +28,20 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+//find a user
+router.get("validate-steps/:id", async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) return res.status(404).send("No User Exist with this ID!");
+    //sendig user back
+    if (!user.address) return res.status(404).send(false);
+
+    res.status(200).send(true);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 //update a user
 router.put("/:id", async (req, res) => {
   try {

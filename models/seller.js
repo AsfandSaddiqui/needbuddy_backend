@@ -18,7 +18,6 @@ const Seller = mongoose.model(
       expertise: { type: String },
       expertiseLevel: {
         type: String,
-        minlength: 10,
         maxlength: 20,
         enum: ["Entry", "Intermediate", "Expert"],
       },
@@ -39,7 +38,7 @@ const validateSeller = (seller) => {
     headline: Joi.string().min(3).max(25),
     description: Joi.string().min(3).max(1500),
     expertise: Joi.string(),
-    expertiseLevel: Joi.string().min(6).max(20),
+    expertiseLevel: Joi.string().max(20),
     skills: Joi.array(),
     badge: Joi.string().min(6).max(20),
     address: Joi.string().max(255),

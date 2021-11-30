@@ -23,7 +23,6 @@ const Job = mongoose.model(
       timeRequired: { type: String, lowercase: true, required: true },
       expertiseRequired: {
         type: String,
-        minlength: 10,
         maxlength: 20,
         enum: ["Entry", "Intermediate", "Expert"],
         required: true,
@@ -64,7 +63,7 @@ const validateJob = (job) => {
   const schema = Joi.object({
     headline: Joi.string().min(3).max(25).required(),
     description: Joi.string().min(3).max(1500).required(),
-    expertiseRequired: Joi.string().min(3).max(25).required(),
+    expertiseRequired: Joi.string().max(25).required(),
     skillsRequired: Joi.array().items(Joi.string()).required(),
     timeRequired: Joi.string().min(6).max(20).required(),
     attachments: Joi.array().items(Joi.string()),
