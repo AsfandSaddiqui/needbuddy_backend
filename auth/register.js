@@ -1,6 +1,6 @@
 const express = require("express");
 const { validate, User } = require("../models/user");
-const { verifyEmail, passwordReset } = require("../utils/sendEmail");
+const { verifyEmail } = require("../utils/sendEmail");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
@@ -21,9 +21,9 @@ router.post("/", async (req, res) => {
   try {
     const result = await User.findOne({ username: req.body.username });
     if (result.email == req.body.email)
-      res.status(400).send("Email Already Exist!");
+      return res.status(400).send("Email Already Exist!");
 
-    if (result) res.status(400).send("Username Already Exist!");
+    if (result) return res.status(400).send("Username Already Exist!");
   } catch (e) {
     console.log(e.message);
   }
@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
     // if (result) verifyEmail(user.email, url);
     res.status(201).send("user created Successfully!");
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).send("Something failed!");
   }
 });
 
