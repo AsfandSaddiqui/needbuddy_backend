@@ -17,9 +17,7 @@ router.get("/", async (req, res) => {
 //find all jobs of user
 router.get("/:id", async (req, res) => {
   try {
-    const jobs = await Job.findOne({ userId: req.params.id }).populate(
-      "userId"
-    );
+    const jobs = await Job.find({ userId: req.params.id });
     res.status(200).send(jobs);
   } catch (error) {
     res.status(500).send(error.message);
