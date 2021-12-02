@@ -21,7 +21,7 @@ const Proposal = mongoose.model(
       },
       timeRequired: { type: String, lowercase: true, required: true },
 
-      budget: {
+      offer: {
         type: Number,
         min: 1,
         required: true,
@@ -50,8 +50,8 @@ const validateProposal = (proposal) => {
     coverLetter: Joi.string().min(3).max(1500).required(),
     timeRequired: Joi.string().min(6).max(20).required(),
     attachments: Joi.array().items(Joi.string()),
-    isActive: Joi.string().min(6).max(20),
-    budget: Joi.number().min(1).required(),
+    isActive: Joi.boolean,
+    offer: Joi.number().min(1).required(),
     sellerId: Joi.required(),
     jobId: Joi.required(),
   });

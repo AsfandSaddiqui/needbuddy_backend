@@ -40,7 +40,7 @@ const validateSeller = (seller) => {
     expertise: Joi.string(),
     expertiseLevel: Joi.string().max(20),
     skills: Joi.array(),
-    badge: Joi.string().min(6).max(20),
+    badge: Joi.string().max(20),
     address: Joi.string().max(255),
     city: Joi.string().min(4).max(25),
     zipCode: Joi.number(),

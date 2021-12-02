@@ -68,7 +68,7 @@ const validateJobSetup = (job) => {
     skillsRequired: Joi.array().items(Joi.string()).required(),
     timeRequired: Joi.string().min(6).max(20).required(),
     attachments: Joi.array().items(Joi.string()),
-    isActive: Joi.string().min(6).max(20),
+    isActive: Joi.boolean,
     budget: Joi.number().min(1).required(),
     address: Joi.string().max(255),
     city: Joi.string().min(4).max(25),

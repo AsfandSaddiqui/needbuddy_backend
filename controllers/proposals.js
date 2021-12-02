@@ -16,12 +16,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-//find a proposal
+//find a proposals
 router.get("/:id", async (req, res) => {
   try {
-    const proposal = await Proposal.findOne({ _id: req.params.id })
-      .populate("userId")
-      .populate("sellerId");
+    const proposal = await Proposal.find({ jobId: req.params.id })
+      .populate("sellerId")
+      .populate("jobId");
     res.status(200).send(proposal);
   } catch (error) {
     res.status(500).send(error.message);
@@ -68,29 +68,28 @@ router.post("/", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  
-    if (!user) return res.status(404).send("No User Exist!");
+  try {
+    const job = await Proposal.find({ jobId: req.params.id });
+    if (!job) return res.status(404).send("No Job  Exist!");
   } catch (error) {
     res.status(500).send(error.message);
   }
 
   //creating new job
-  const job = new Job({
-    headline: req.body.headline,
-    description: req.body.description,
-    expertiseRequired: req.body.expertiseRequired,
+  const proposal = new Proposal({
+    coverLetter: req.body.coverLetter,
     timeRequired: req.body.timeRequired,
-    skillsRequired: req.body.skillsRequired,
     attachments: req.body.attachments,
     isActive: req.body.isActive,
-    budget: req.body.budget,
-    userId: req.body.userId,
+    offer: req.body.offer,
+    sellerId: req.body.sellerId,
+    jobId: req.body.jobId,
   });
 
   //saving in database
   try {
-    const result = await job.save();
-    res.status(201).send("job created Successfully!");
+    const result = await proposal.save();
+    res.status(201).send("proposal created Successfully!");
   } catch (err) {
     res.status(500).send(err.message);
   }
