@@ -1,6 +1,6 @@
 //users routes defined here
 const express = require("express");
-const { validate, Proposal } = require("../models/proposal");
+const { validate, Proposal, stringToObject } = require("../models/proposal");
 const { User } = require("../models/user");
 const router = express.Router();
 
@@ -18,11 +18,52 @@ router.get("/", async (req, res) => {
 
 //find a proposals
 router.get("/:id", async (req, res) => {
+  //converting string Id into objectID
+  const id = stringToObject(req.params.id);
+
   try {
-    const proposal = await Proposal.find({ jobId: req.params.id })
-      .populate("sellerId")
-      .populate("jobId");
-    res.status(200).send(proposal);
+    const proposal = await Proposal.aggregate([
+      { $match: { jobId: id } },
+      {
+        $lookup: {
+          from: "sellers",
+          localField: "sellerId",
+          foreignField: "_id",
+          as: "seller",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "seller.userId",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $project: {
+          "user.password": 0,
+          "user.email": 0,
+          "user.address": 0,
+          "user.city": 0,
+          "user.zipCode": 0,
+          "user.accountType": 0,
+          "user.isActive": 0,
+          "user.firstName": 0,
+          "user.lastName": 0,
+          "user.phoneNumber": 0,
+        },
+      },
+    ]);
+
+    // const proposal = await Proposal.find({ jobId: req.params.id })
+    //   .populate("sellerId")
+    //   .populate("jobId");
+    if (proposal) {
+      console.log(proposal);
+      // const user = await User.findOne({ _id: proposal.sellerId.userId });
+      res.status(200).send({ proposal });
+    }
   } catch (error) {
     res.status(500).send(error.message);
   }

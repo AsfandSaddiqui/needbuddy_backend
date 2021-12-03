@@ -59,6 +59,14 @@ const validateProposal = (proposal) => {
   return schema.validate(proposal);
 };
 
+//User schema validation method to validate incoming data
+const stringToObject = (id) => {
+  const result = mongoose.Types.ObjectId(id);
+
+  return result;
+};
+
 //exporting
 exports.Proposal = Proposal;
 exports.validate = validateProposal;
+exports.stringToObject = stringToObject;
