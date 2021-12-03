@@ -6,8 +6,14 @@ const router = express.Router();
 
 //get all jobs
 router.get("/", async (req, res) => {
+  let pageNumber = 1;
+  const pageSize = 10;
+  if (req.query.pageNumber) pageNumber = req.query.pageNumber;
   try {
-    const jobs = await Job.find().populate("userId");
+    const jobs = await Job.find()
+      .populate("userId")
+      .skip((pageNumber - 1) * pageSize)
+      .limit(10);
     res.status(200).send(jobs);
   } catch (error) {
     res.status(500).send(error.message);
