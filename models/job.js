@@ -60,7 +60,7 @@ const Job = mongoose.model(
 );
 
 //Job schema validation method to validate incoming data
-const validateJobSetup = (job) => {
+const validateStep = (job) => {
   const schema = Joi.object({
     headline: Joi.string().min(3).max(25).required(),
     description: Joi.string().min(3).max(1500).required(),
@@ -78,11 +78,12 @@ const validateJobSetup = (job) => {
     userId: Joi.required(),
   });
 
-  return schema.validateJob(job);
+  return schema.validate(job);
 };
 
-//Job schema validation method to validate incoming data
-const validateJob = (job) => {
+// Job schema validation method to validate incoming data
+
+const validate = (job) => {
   const schema = Joi.object({
     headline: Joi.string().min(3).max(25).required(),
     description: Joi.string().min(3).max(1500).required(),
@@ -100,5 +101,5 @@ const validateJob = (job) => {
 
 //exporting
 exports.Job = Job;
-exports.validate = validateJob;
-exports.validateJob = validateJobSetup;
+exports.validate = validate;
+exports.validateStep = validateStep;
