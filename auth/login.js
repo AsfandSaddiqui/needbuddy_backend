@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
         firstName: user.firstName,
         isStepsComplete: isStepsComplete,
         email: user.email,
-
+        avatar: user.avatar,
         isEmailVerified: user.isEmailVerified,
       },
       process.env.JWT_KEY
