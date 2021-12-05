@@ -159,7 +159,7 @@ router.post("/", async (req, res) => {
     res.status(500).send(error.message);
   }
 
-  //creating new job
+  //creating new proposal
   const proposal = new Proposal({
     coverLetter: req.body.coverLetter,
     timeRequired: req.body.timeRequired,

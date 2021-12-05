@@ -6,8 +6,14 @@ const Conversation = mongoose.model(
   "conversations",
   new mongoose.Schema(
     {
-      members: {
-        type: Array,
+      senderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+      },
+      receiverId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
         required: true,
       },
     },
@@ -18,7 +24,8 @@ const Conversation = mongoose.model(
 //Job schema validation method to validate incoming data
 const validate = (conversation) => {
   const schema = Joi.object({
-    members: Joi.array().required(),
+    senderId: Joi.required(),
+    receiverId: Joi.required(),
   });
 
   return schema.validate(conversation);

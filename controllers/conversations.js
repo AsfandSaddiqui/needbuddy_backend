@@ -1,27 +1,43 @@
 const express = require("express");
-const Conversation = require("../models/Conversation");
+const { validate, Conversation } = require("../models/Conversation");
 const router = express.Router();
 
-//new conversation
+//create a conversation
 router.post("/", async (req, res) => {
-  const newConversation = new Conversation({
-    members: [req.body.senderId, req.body.receiverId],
+  //validating body
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  //validaing if seller already existed
+  try {
+    const result = await Conversation.findOne({
+      senderId: req.body.senderId,
+      receiverId: req.body.receiverId,
+    });
+    console.log(result);
+    if (result) return res.status(400).send("Conversation Already Exist");
+  } catch (e) {
+    console.log(e.message);
+  }
+
+  //creating new seller
+  const conversation = new Conversation({
+    senderId: req.body.senderId,
+    receiverId: req.body.senderId,
   });
 
+  //saving in database
   try {
-    const savedConversation = await newConversation.save();
-    res.status(200).json(savedConversation);
+    const result = await conversation.save();
+    res.status(201).send("conversation created Successfully!");
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).send(err.message);
   }
 });
 
 //get conversation of a user
-router.get("/:userId", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const conversation = await Conversation.find({
-      members: { $in: [req.params.userId] },
-    });
+    const conversation = await Conversation.findOne({ _id: req.params.id });
     res.status(200).json(conversation);
   } catch (err) {
     res.status(500).json(err);
@@ -29,10 +45,11 @@ router.get("/:userId", async (req, res) => {
 });
 
 // get conversation includes two userId
-router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
+router.get("/find/:senderId/:receiverId", async (req, res) => {
   try {
-    const conversation = await Conversation.findOne({
-      members: { $all: [req.params.firstUserId, req.params.secondUserId] },
+    const conversation = await Conversation.find({
+      senderId: req.params.senderId,
+      receiverId: req.params.receiverId,
     });
     res.status(200).json(conversation);
   } catch (err) {
@@ -40,15 +57,24 @@ router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
   }
 });
 
+// get all conversation of sender
+router.get("/find/:senderId/", async (req, res) => {
+  try {
+    const conversation = await Conversation.find({
+      senderId: req.params.senderId,
+    }).populate("receiverId", "username avatar -_id ");
+
+    // .select("email");
+    res.status(200).json(conversation);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+// get all conversation
 router.get("/", async function (req, res) {
   try {
-    console.log("test");
-    const conv = await Conversation.find();
-    console.log(conv);
-    res.status(200).json({
-      success: true,
-      data: conv,
-    });
+    const result = await Conversation.find();
+    res.status(200).send(result);
   } catch (err) {
     res.status(500).json(err);
   }

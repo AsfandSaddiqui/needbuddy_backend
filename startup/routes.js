@@ -6,6 +6,8 @@ const users = require("../controllers/users");
 const sellers = require("../controllers/sellers");
 const jobs = require("../controllers/jobs");
 const proposals = require("../controllers/proposals");
+const conversation = require("../controllers/conversations");
+const message = require("../controllers/messages");
 const register = require("../auth/register");
 const login = require("../auth/login");
 const emailVerify = require("../controllers/emailVerify");
@@ -19,6 +21,8 @@ module.exports = function (app) {
   app.use("/api/seller", sellers);
   app.use("/api/job", jobs);
   app.use("/api/proposal", proposals);
+  app.use("/api/conversation", conversation);
+  app.use("/api/message", message);
   app.use("/auth/register", register);
   app.use("/auth/login", login);
   app.use("/verify", emailVerify);

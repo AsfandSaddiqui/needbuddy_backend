@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 //defining a model
 const Message = mongoose.model(
-  "conversations",
+  "messages",
   new mongoose.Schema(
     {
       conversationId: {
