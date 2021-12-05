@@ -1,5 +1,5 @@
 const express = require("express");
-const { validate, Conversation } = require("../models/Conversation");
+const { validate, Conversation } = require("../models/conversation");
 const router = express.Router();
 
 //create a conversation
