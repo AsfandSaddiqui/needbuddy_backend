@@ -62,7 +62,7 @@ router.get("/find/:senderId/", async (req, res) => {
   try {
     const conversation = await Conversation.find({
       senderId: req.params.senderId,
-    }).populate("receiverId", "username avatar -_id ");
+    }).populate("receiverId", "username avatar _id ");
 
     // .select("email");
     res.status(200).json(conversation);

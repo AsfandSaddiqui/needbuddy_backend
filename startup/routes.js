@@ -12,7 +12,7 @@ const register = require("../auth/register");
 const login = require("../auth/login");
 const emailVerify = require("../controllers/emailVerify");
 
-module.exports = function (app) {
+module.exports = function (app, server) {
   app.use(helmet()); // it encrypt my headers which helps in preventing attacks
   app.use(cors()); // it allows external origins to make request to my api
   app.use(express.json()); //return middleware function which check if there is any json object inside req body
