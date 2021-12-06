@@ -2,7 +2,7 @@ const express = require("express");
 const { validate, Message } = require("../models/message");
 const router = express.Router();
 
-//create a conversation
+//create a message
 router.post("/", async (req, res) => {
   //validating body
   const { error } = validate(req.body);
@@ -22,6 +22,19 @@ router.post("/", async (req, res) => {
     res.status(201).send("Message added Successfully!");
   } catch (err) {
     res.status(500).send(err.message);
+  }
+});
+
+// get all messages of conversation
+router.get("/find/:conversationId/", async (req, res) => {
+  try {
+    const messages = await Message.find({
+      conversationId: req.params.conversationId,
+    }).populate("senderId", "avatar -_id ");
+
+    res.status(200).json(messages);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
