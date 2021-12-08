@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
   //saving in database
   try {
     const result = await message.save();
-    res.status(201).send("Message added Successfully!");
+    res.status(201).send(result);
   } catch (err) {
     res.status(500).send(err.message);
   }

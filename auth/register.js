@@ -1,6 +1,7 @@
 const express = require("express");
 const { validate, User } = require("../models/user");
 const { verifyEmail } = require("../utils/sendEmail");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
@@ -48,7 +49,7 @@ router.post("/", async (req, res) => {
     // if (result) verifyEmail(user.email, url);
     res.status(201).send("user created Successfully!");
   } catch (err) {
-    res.status(500).send("Something failed!");
+    res.status(500).send(err.message);
   }
 });
 
