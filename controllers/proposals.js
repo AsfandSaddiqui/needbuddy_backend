@@ -131,12 +131,12 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     //checking if proposal exist
-    const result = await User.findById(req.params.id);
+    const result = await Proposal.findById(req.params.id);
     if (!result) return res.status(404).send("No Proposal Exist with this Id!");
 
     //delete proposal from database
     try {
-      const result = await User.deleteOne({ _id: req.params.id });
+      const result = await Proposal.deleteOne({ _id: req.params.id });
       return res.status(200).send("Proposal deleted Successfully");
     } catch (e) {
       console.log(e.message);
