@@ -2,6 +2,7 @@
 const express = require("express");
 const { validate, Job, validateStep } = require("../models/job");
 const { User } = require("../models/user");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 //get all jobs
@@ -102,8 +103,9 @@ router.post("/steps", async (req, res) => {
 
   const { avatar, phoneNumber, zipCode, address, city } = req.body;
   //validates and update user record if  exist
+  let user;
   try {
-    const user = await User.findByIdAndUpdate(req.body.userId, {
+    user = await User.findByIdAndUpdate(req.body.userId, {
       $set: {
         avatar,
         phoneNumber,
@@ -130,10 +132,26 @@ router.post("/steps", async (req, res) => {
     userId: req.body.userId,
   });
 
+  const token = jwt.sign(
+    {
+      _id: user._id,
+      user_type: user.accountType,
+      firstName: user.firstName,
+      isStepsComplete: true,
+      email: user.email,
+      avatar: user.avatar,
+      isEmailVerified: user.isEmailVerified,
+    },
+    process.env.JWT_KEY
+  );
+
   //saving in database
   try {
     const result = await job.save();
-    if (result) return res.status(201).send("Job Added Successfully!");
+    if (result)
+      return res
+        .status(201)
+        .json({ token, Message: "Steps Completed Successfully" });
   } catch (err) {
     return res.status(500).send(err.message);
   }

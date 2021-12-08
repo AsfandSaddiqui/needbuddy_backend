@@ -2,6 +2,7 @@
 const express = require("express");
 const { validate, Seller } = require("../models/seller");
 const { User } = require("../models/user");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 //get all users
@@ -91,8 +92,9 @@ router.post("/", async (req, res) => {
 
   const { avatar, phoneNumber, zipCode, address, city } = req.body;
   //validates and update user record if  exist
+  let user;
   try {
-    const user = await User.findByIdAndUpdate(req.body.userId, {
+    user = await User.findByIdAndUpdate(req.body.userId, {
       $set: {
         avatar,
         phoneNumber,
@@ -101,6 +103,7 @@ router.post("/", async (req, res) => {
         city,
       },
     });
+
     if (!user) return res.status(404).send("No User Exist!");
   } catch (error) {
     res.status(500).send(error.message);
@@ -119,10 +122,26 @@ router.post("/", async (req, res) => {
     userId: req.body.userId,
   });
 
+  //updating Token
+  const token = jwt.sign(
+    {
+      _id: user._id,
+      user_type: user.accountType,
+      firstName: user.firstName,
+      isStepsComplete: true,
+      email: user.email,
+      avatar: user.avatar,
+      isEmailVerified: user.isEmailVerified,
+    },
+    process.env.JWT_KEY
+  );
+
   //saving in database
   try {
     const result = await seller.save();
-    res.status(201).send("seller created Successfully!");
+    res
+      .status(201)
+      .json({ token, message: "seller Steps Completed Successfully!" });
   } catch (err) {
     res.status(500).send(err.message);
   }
