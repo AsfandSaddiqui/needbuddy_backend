@@ -6,10 +6,16 @@ const router = express.Router();
 
 //get all proposals
 router.get("/", async (req, res) => {
+  let pageNumber = 1;
+  const pageSize = 10;
+  if (req.query.pageNumber) pageNumber = req.query.pageNumber;
   try {
     const proposals = await Proposal.find()
       .populate("jobId")
-      .populate("sellerId");
+      .populate("sellerId")
+      .skip((pageNumber - 1) * pageSize)
+      .limit(10)
+      .sort({ $natural: -1 });
     res.status(200).send(proposals);
   } catch (error) {
     res.status(500).send(error.message);
