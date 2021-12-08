@@ -24,15 +24,23 @@ router.get("/", async (req, res) => {
 
 //find all jobs of user
 router.get("/:id", async (req, res) => {
+  let pageNumber = 1;
+  const pageSize = 10;
+  if (req.query.pageNumber) pageNumber = req.query.pageNumber;
+
   try {
-    const jobs = await Job.find({ userId: req.params.id });
+    const jobs = await Job.find({ userId: req.params.id })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(10)
+      .sort({ $natural: -1 });
+
     res.status(200).send(jobs);
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
 
-//find  job of user
+//find  job by ID
 router.get("/find/:id", async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
