@@ -73,10 +73,10 @@ router.get("/reset-password/:email", async (req, res) => {
     const token = generatePasswordToken(user._id);
     //closed for testing purpose
     const url = `https://needbuddy.herokuapp.com/reset-password`;
-    passwordReset(user.email, url);
-
+    const isSend = await passwordReset(user.email, url);
+    console.log(isSend);
     //sendig response back
-    res.status(200).send(token);
+    if (isSend) return res.status(200).send(token);
   } catch (error) {
     res.status(500).send(error.message);
   }

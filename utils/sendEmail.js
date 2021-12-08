@@ -128,28 +128,30 @@ const passwordReset = async (email, url) => {
   );
 
   oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-
+  let accessToken;
   try {
-    const accessToken = await oAuth2Client.getAccessToken();
+    accessToken = await oAuth2Client.getAccessToken();
+  } catch (error) {
+    return error.message;
+  }
+  const transport = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: "hasnainmohiuddin99@gmail.com",
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      refreshToken: REFRESH_TOKEN,
+      accessToken: accessToken,
+    },
+  });
 
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: "hasnainmohiuddin99@gmail.com",
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken,
-      },
-    });
-
-    const mailOptions = {
-      from: "NeedBuddy <hasnainmohiuddin99@gmail.com>",
-      to: `${email}`,
-      subject: "Password Reset",
-      text: "Change your Password",
-      html: `<div style="box-sizing:border-box;display:block;max-width:600px;margin:0 auto;padding:10px"><span style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;width:0">Password Reset.</span>
+  const mailOptions = {
+    from: "NeedBuddy <hasnainmohiuddin99@gmail.com>",
+    to: `${email}`,
+    subject: "Password Reset",
+    text: "Change your Password",
+    html: `<div style="box-sizing:border-box;display:block;max-width:600px;margin:0 auto;padding:10px"><span style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;width:0">Password Reset.</span>
 			  <div style="box-sizing:border-box;width:100%;margin-bottom:30px;margin-top:15px">
 			  <table style="box-sizing:border-box;width:100%;border-spacing:0;border-collapse:separate!important" width="100%">
 				  
@@ -215,17 +217,14 @@ const passwordReset = async (email, url) => {
 			  </table>
 			  </div>
 			  </div>`,
-    };
+  };
 
-    //sending Email
-    try {
-      const result = await transport.sendMail(mailOptions);
-      return "Email Send";
-    } catch (e) {
-      return e.message;
-    }
-  } catch (error) {
-    return error.message;
+  //sending Email
+  try {
+    const result = await transport.sendMail(mailOptions);
+    if (result) return true;
+  } catch (e) {
+    return e.message;
   }
 };
 
