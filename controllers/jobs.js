@@ -14,7 +14,8 @@ router.get("/", async (req, res) => {
     const jobs = await Job.find()
       .populate("userId")
       .skip((pageNumber - 1) * pageSize)
-      .limit(10);
+      .limit(10)
+      .sort({ $natural: -1 });
     res.status(200).send(jobs);
   } catch (error) {
     res.status(500).send(error.message);
@@ -26,6 +27,16 @@ router.get("/:id", async (req, res) => {
   try {
     const jobs = await Job.find({ userId: req.params.id });
     res.status(200).send(jobs);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+//find  job of user
+router.get("/find/:id", async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+    res.status(200).send(job);
   } catch (error) {
     res.status(500).send(error.message);
   }
