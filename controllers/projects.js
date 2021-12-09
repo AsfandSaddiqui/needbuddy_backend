@@ -212,7 +212,7 @@ router.get("/", async (req, res) => {
 });
 
 // update  project status 
-router.put("/", async (req, res) => {
+router.put("/:id", async (req, res) => {
  try {
     const project = await Project.findByIdAndUpdate(req.params.id, {
       $set: req.body,
