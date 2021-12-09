@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-//find a proposals using buyer ID
+//find a proposals using Job ID
 router.get("/buyer/:id", async (req, res) => {
   //converting string Id into objectID
   const id = stringToObject(req.params.id);
@@ -71,14 +71,22 @@ router.get("/buyer/:id", async (req, res) => {
   }
 });
 
-//find a proposals using buyer ID
+//find a proposals using seller ID
 router.get("/seller/:id", async (req, res) => {
-  //converting string Id into objectID
-  const id = stringToObject(req.params.id);
+
+ //searching for seller against user Id
+  let seller;
+  try {
+    seller = await Seller.findOne({userId:req.params.id});
+    if (!seller)return res.status(404).send("No Seller Exist with this User ID!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+
 
   try {
     const proposal = await Proposal.aggregate([
-      { $match: { sellerId: id } },
+      { $match: { sellerId: seller._id } },
       {
         $lookup: {
           from: "jobs",
@@ -118,6 +126,20 @@ router.get("/seller/:id", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+//find proposal
+router.get("/:id", async (req, res) => {
+  try {
+    const proposal = await Proposal.findById( req.params.id )
+      if(!proposal) return res.status(200).send("No proposal Exist with this ID!");
+    res.status(200).send(proposal);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+
+
 
 //find and update a job
 router.put("/:id", async (req, res) => {
@@ -177,6 +199,7 @@ router.post("/", async (req, res) => {
   }
 
   const id = seller[0]._id.toString();
+  console.log("Id is here",id)
   //creating new proposal
   const proposal = new Proposal({
     coverLetter: req.body.coverLetter,
@@ -184,7 +207,7 @@ router.post("/", async (req, res) => {
     attachments: req.body.attachments,
     isActive: req.body.isActive,
     offer: req.body.offer,
-    sellerId: id,
+    sellerId: seller[0]._id,
     jobId: req.body.jobId,
   });
 
