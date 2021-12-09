@@ -45,6 +45,17 @@ const Project = mongoose.model(
       
       },
 
+      sellerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "sellers"
+      },
+      buyerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "users"
+      },
+
       proposalId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "proposals",
@@ -65,9 +76,18 @@ const validate = (project) => {
   const schema = Joi.object({
     proposalId: Joi.required(),
     jobId: Joi.required(),
+    sellerId: Joi.required(),
+    buyerId: Joi.required(),
   });
 
   return schema.validate(project);
+};
+
+//Converting string to object ID
+const stringToObject = (id) => {
+  const result = mongoose.Types.ObjectId(id);
+
+  return result;
 };
 
 
@@ -75,4 +95,5 @@ const validate = (project) => {
 //exporting
 exports.Project = Project;
 exports.validate = validate;
+exports.stringToObject = stringToObject;
 
