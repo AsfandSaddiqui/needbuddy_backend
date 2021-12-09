@@ -45,7 +45,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //find a seller by userID
-router.get("/:id", async (req, res) => {
+router.get("/find/:id", async (req, res) => {
   try {
     const seller = await Seller.findOne({userId:req.params.id}).populate("userId");
     res.status(200).send(seller);
