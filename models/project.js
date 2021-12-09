@@ -9,40 +9,40 @@ const Project = mongoose.model(
       sellerReview: {
         type: String,
         minlength: 3,
-        maxlength: 1500,
+        maxlength: 300,
         lowercase: true,
-        required: true,
       },
-      timeRequired: {
-        type: String,
-        enum: ["less than 1 month", "1 to 3 months", "3 to 6 months"],
-        required: true,
-      },
+      // timeRequired: {
+      //   type: String,
+      //   enum: ["less than 1 month", "1 to 3 months", "3 to 6 months"],
+      //   required: true,
+      // },
 
       status: {
         type: String,
         maxlength: 20,
         enum: ["Ongoing", "Completed", "Canceled"],
         required: true,
+        default: "Ongoing"
       },
-      amount: {
-        type: Number,
-        min: 1,
-        required: true,
-      },
+      // amount: {
+      //   type: Number,
+      //   min: 1,
+      //   required: true,
+      // },
 
-      buyerReview: [
+      buyerReview: 
         {
           type: String,
           minlength: 3,
-          required: true,
+          maxlength:300
         },
-      ],
+      
 
       rating: {
-        type: Double,
-        ref: "jobs",
-        required: true,
+        type: Number,
+    
+      
       },
 
       proposalId: {
@@ -61,45 +61,18 @@ const Project = mongoose.model(
 );
 
 //Job schema validation method to validate incoming data
-const validateJobSetup = (job) => {
+const validate = (project) => {
   const schema = Joi.object({
-    headline: Joi.string().min(3).max(25).required(),
-    description: Joi.string().min(3).max(1500).required(),
-    expertiseRequired: Joi.string().max(25).required(),
-    skillsRequired: Joi.array().items(Joi.string()).required(),
-    timeRequired: Joi.string().min(6).max(20).required(),
-    attachments: Joi.array().items(Joi.string()),
-    isActive: Joi.boolean,
-    budget: Joi.number().min(1).required(),
-    address: Joi.string().max(255),
-    city: Joi.string().min(4).max(25),
-    zipCode: Joi.number(),
-    phoneNumber: Joi.string().min(10).max(11),
-    avatar: Joi.string(),
-    userId: Joi.required(),
+    proposalId: Joi.required(),
+    jobId: Joi.required(),
   });
 
-  return schema.validateJob(job);
+  return schema.validate(project);
 };
 
-//Job schema validation method to validate incoming data
-const validateJob = (job) => {
-  const schema = Joi.object({
-    headline: Joi.string().min(3).max(25).required(),
-    description: Joi.string().min(3).max(1500).required(),
-    expertiseRequired: Joi.string().max(25).required(),
-    skillsRequired: Joi.array().items(Joi.string()).required(),
-    timeRequired: Joi.string().min(6).max(20).required(),
-    attachments: Joi.array().items(Joi.string()),
-    isActive: Joi.string().min(6).max(20),
-    budget: Joi.number().min(1).required(),
-    userId: Joi.required(),
-  });
 
-  return schema.validate(job);
-};
 
 //exporting
-exports.Job = Job;
-exports.validate = validateJob;
-exports.validateJob = validateJobSetup;
+exports.Project = Project;
+exports.validate = validate;
+

@@ -138,9 +138,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-
-
 //find and update a job
 router.put("/:id", async (req, res) => {
   try {

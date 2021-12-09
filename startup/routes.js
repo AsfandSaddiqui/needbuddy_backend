@@ -6,6 +6,7 @@ const users = require("../controllers/users");
 const sellers = require("../controllers/sellers");
 const jobs = require("../controllers/jobs");
 const proposals = require("../controllers/proposals");
+const projects = require("../controllers/projects");
 const conversation = require("../controllers/conversations");
 const message = require("../controllers/messages");
 const register = require("../auth/register");
@@ -21,6 +22,7 @@ module.exports = function (app, server) {
   app.use("/api/seller", sellers);
   app.use("/api/job", jobs);
   app.use("/api/proposal", proposals);
+  app.use("/api/project", projects);
   app.use("/api/conversation", conversation);
   app.use("/api/message", message);
   app.use("/auth/register", register);
