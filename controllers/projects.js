@@ -1,5 +1,6 @@
 const express = require("express");
 const { validate, Project,stringToObject } = require("../models/project");
+const { Seller } = require("../models/seller");
 const router = express.Router();
 
 //create a projects
@@ -27,13 +28,17 @@ router.post("/", async (req, res) => {
 
 // get all projects of sellers 
 router.get("/seller/:userId", async (req, res) => {
-   
-
-      //converting string Id into objectID
-  const id = stringToObject(req.params.userId);
+   //searching for seller against user Id
+  let seller;
+  try {
+    seller = await Seller.findOne({userId:req.params.userId});
+    if (!seller)return res.status(404).send("No Seller Exist with this User ID!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 
   try {
-    const projects = await Project.aggregate([{$match:{ sellerId: id }},
+    const projects = await Project.aggregate([{$match:{ sellerId: seller._id }},
     
     {
         $lookup: {
