@@ -47,7 +47,7 @@ router.get("/:id", async (req, res) => {
 //update a seller
 router.put("/:id", async (req, res) => {
   try {
-    const seller = await Seller.findByIdAndUpdate(req.params.id, {
+    const seller = await Seller.findOneAndUpdate({userId:req.params.id}, {
       $set: req.body,
     });
     if (!seller) return res.status(404).send("No Seller Exist with this ID!");
@@ -57,6 +57,21 @@ router.put("/:id", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+//update seller profile
+router.put("/:id", async (req, res) => {
+  try {
+    const seller = await Seller.findOneAndUpdate({userId:req.params.id}, {
+      $set: req.body,
+    });
+    if (!seller) return res.status(404).send("No Seller Exist with this ID!");
+    //sendig user back
+    res.status(200).send("Seller Details Updated Successfully!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 
 //delete  seller profile page
 router.delete("/:id", async (req, res) => {
