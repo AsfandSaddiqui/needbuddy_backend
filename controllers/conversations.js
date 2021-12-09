@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
       senderId: req.body.senderId,
       receiverId: req.body.receiverId,
     });
-    console.log(result);
+    
     if (result) return res.status(400).send("Conversation Already Exist");
   } catch (e) {
     console.log(e.message);
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
   //creating new seller
   const conversation = new Conversation({
     senderId: req.body.senderId,
-    receiverId: req.body.senderId,
+    receiverId: req.body.receiverId,
   });
 
   //saving in database
@@ -60,11 +60,10 @@ router.get("/find/:senderId/:receiverId", async (req, res) => {
 // get all conversation of sender
 router.get("/find/:senderId/", async (req, res) => {
   try {
-    const conversation = await Conversation.find({
-      senderId: req.params.senderId,
-    }).populate("receiverId", "username avatar _id ");
+    const conversation = await Conversation.find({ $or: [ { senderId: req.params.senderId }, {receiverId: req.params.senderId } ] }
+      
+    ).populate("receiverId", "username avatar _id ");
 
-    // .select("email");
     res.status(200).json(conversation);
   } catch (err) {
     res.status(500).json(err);
