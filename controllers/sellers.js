@@ -44,6 +44,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+//find a seller by userID
+router.get("/:id", async (req, res) => {
+  try {
+    const seller = await Seller.findOne({userId:req.params.id}).populate("userId");
+    res.status(200).send(seller);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 //update a seller
 router.put("/:id", async (req, res) => {
   try {
@@ -59,7 +69,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //update seller profile
-router.put("/:id", async (req, res) => {
+router.put("/:id/setting", async (req, res) => {
   try {
     const seller = await Seller.findOneAndUpdate({userId:req.params.id}, {
       $set: req.body,
