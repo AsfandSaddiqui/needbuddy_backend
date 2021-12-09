@@ -2,6 +2,7 @@
 const express = require("express");
 const { validate, Proposal, stringToObject } = require("../models/proposal");
 const { User } = require("../models/user");
+const { Seller } = require("../models/seller");
 const router = express.Router();
 
 //get all proposals
@@ -159,12 +160,23 @@ router.post("/", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
-    const job = await Proposal.find({ jobId: req.params.id });
+    const job = await Proposal.find({ jobId: req.body.id });
     if (!job) return res.status(404).send("No Job  Exist!");
   } catch (error) {
     res.status(500).send(error.message);
   }
 
+  //searching for seller against user Id
+  let seller;
+  try {
+    seller = await Seller.find({ userId: req.body.userId });
+    if (!seller)
+      return res.status(404).send("No Seller Exist with this User ID!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+
+  const id = seller[0]._id.toString();
   //creating new proposal
   const proposal = new Proposal({
     coverLetter: req.body.coverLetter,
@@ -172,7 +184,7 @@ router.post("/", async (req, res) => {
     attachments: req.body.attachments,
     isActive: req.body.isActive,
     offer: req.body.offer,
-    sellerId: req.body.sellerId,
+    sellerId: id,
     jobId: req.body.jobId,
   });
 

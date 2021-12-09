@@ -39,6 +39,12 @@ const Project = mongoose.model(
         },
       ],
 
+      rating: {
+        type: Double,
+        ref: "jobs",
+        required: true,
+      },
+
       proposalId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "proposals",

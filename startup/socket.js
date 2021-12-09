@@ -14,12 +14,12 @@ module.exports = function (io) {
   };
   //run when user connected
   io.on("connection", (socket) => {
-    console.log("user Connected");
+    console.log("user Connected", socket.id);
 
     //take userId and socketId from user
     socket.on("addUser", (userId) => {
       addUser(userId, socket.id);
-      io.emit("getUsers", users);
+      // io.emit("getUsers", users);
     });
 
     //send and get message
@@ -37,7 +37,7 @@ module.exports = function (io) {
     socket.on("disconnect", () => {
       console.log("a user disconnected!");
       removeUser(socket.id);
-      io.emit("getUsers", users);
+      // io.emit("getUsers", users);
     });
   });
 };

@@ -10,7 +10,6 @@ const Proposal = mongoose.model(
         type: mongoose.Schema.Types.ObjectId,
         ref: "sellers",
         required: true,
-        unique: true,
       },
       coverLetter: {
         type: String,
@@ -52,7 +51,7 @@ const validateProposal = (proposal) => {
     attachments: Joi.array().items(Joi.string()),
     isActive: Joi.boolean,
     offer: Joi.number().min(1).required(),
-    sellerId: Joi.required(),
+    userId: Joi.required(),
     jobId: Joi.required(),
   });
 
