@@ -229,4 +229,18 @@ router.put("/:id", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+// add  project reviews 
+router.put("/:id/review", async (req, res) => {
+ try {
+    const project = await Project.findByIdAndUpdate(req.params.id, {
+      $set: req.body,
+    });
+    if (!project) return res.status(404).send("No Project Exist with this ID!");
+    //sendig user back
+    res.status(200).send("Project Details Updated Successfully!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 module.exports = router;

@@ -4,7 +4,6 @@ module.exports = function (io) {
   const addUser = (userId, socketId) => {
     !users.some((user) => user.userId == userId) &&
       users.push({ userId, socketId });
-      console.log(users)
   };
   const removeUser = (socketId) => {
     users = users.filter((user) => user.socketId !== socketId);
@@ -19,7 +18,7 @@ module.exports = function (io) {
 
     //take userId and socketId from user
     socket.on("addUser", (userId) => {
-      console.log(userId);
+    
       addUser(userId, socket.id);
       // io.emit("getUsers", users);
     });
