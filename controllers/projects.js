@@ -1,5 +1,5 @@
 const express = require("express");
-const { validate, Project,stringToObject } = require("../models/project");
+const { validate, Project, stringToObject } = require("../models/project");
 const { Seller } = require("../models/seller");
 const router = express.Router();
 
@@ -13,8 +13,8 @@ router.post("/", async (req, res) => {
   const project = new Project({
     proposalId: req.body.proposalId,
     jobId: req.body.jobId,
-    sellerId:req.body.sellerId,
-    buyerId:req.body.buyerId
+    sellerId: req.body.sellerId,
+    buyerId: req.body.buyerId,
   });
 
   //saving in database
@@ -26,21 +26,23 @@ router.post("/", async (req, res) => {
   }
 });
 
-// get all projects of sellers 
+// get all projects of sellers
 router.get("/seller/:userId", async (req, res) => {
-   //searching for seller against user Id
+  //searching for seller against user Id
   let seller;
   try {
-    seller = await Seller.findOne({userId:req.params.userId});
-    if (!seller)return res.status(404).send("No Seller Exist with this User ID!");
+    seller = await Seller.findOne({ userId: req.params.userId });
+    if (!seller)
+      return res.status(404).send("No Seller Exist with this User ID!");
   } catch (error) {
     res.status(500).send(error.message);
   }
 
   try {
-    const projects = await Project.aggregate([{$match:{ sellerId: seller._id }},
-    
-    {
+    const projects = await Project.aggregate([
+      { $match: { sellerId: seller._id } },
+
+      {
         $lookup: {
           from: "sellers",
           localField: "sellerId",
@@ -58,7 +60,7 @@ router.get("/seller/:userId", async (req, res) => {
         },
       },
 
-       {
+      {
         $lookup: {
           from: "users",
           localField: "buyerId",
@@ -66,8 +68,8 @@ router.get("/seller/:userId", async (req, res) => {
           as: "buyerDetail",
         },
       },
-    
-        {
+
+      {
         $lookup: {
           from: "proposals",
           localField: "proposalId",
@@ -75,7 +77,7 @@ router.get("/seller/:userId", async (req, res) => {
           as: "proposalDetail",
         },
       },
-        {
+      {
         $lookup: {
           from: "jobs",
           localField: "jobId",
@@ -83,7 +85,7 @@ router.get("/seller/:userId", async (req, res) => {
           as: "jobDetail",
         },
       },
-    {
+      {
         $project: {
           "buyerDetail.password": 0,
           "buyerDetail.email": 0,
@@ -108,8 +110,7 @@ router.get("/seller/:userId", async (req, res) => {
           "sellerDetail.phoneNumber": 0,
         },
       },
-    
-    ])
+    ]);
 
     res.status(200).json(projects);
   } catch (err) {
@@ -117,18 +118,16 @@ router.get("/seller/:userId", async (req, res) => {
   }
 });
 
-
-// get all projects of buyers 
+// get all projects of buyers
 router.get("/buyer/:userId", async (req, res) => {
-   
-
-      //converting string Id into objectID
+  //converting string Id into objectID
   const id = stringToObject(req.params.userId);
 
   try {
-    const projects = await Project.aggregate([{$match:{ buyerId: id }},
-    
-    {
+    const projects = await Project.aggregate([
+      { $match: { buyerId: id } },
+
+      {
         $lookup: {
           from: "sellers",
           localField: "sellerId",
@@ -146,7 +145,7 @@ router.get("/buyer/:userId", async (req, res) => {
         },
       },
 
-       {
+      {
         $lookup: {
           from: "users",
           localField: "buyerId",
@@ -154,8 +153,8 @@ router.get("/buyer/:userId", async (req, res) => {
           as: "buyerDetail",
         },
       },
-    
-        {
+
+      {
         $lookup: {
           from: "proposals",
           localField: "proposalId",
@@ -163,7 +162,7 @@ router.get("/buyer/:userId", async (req, res) => {
           as: "proposalDetail",
         },
       },
-        {
+      {
         $lookup: {
           from: "jobs",
           localField: "jobId",
@@ -171,7 +170,7 @@ router.get("/buyer/:userId", async (req, res) => {
           as: "jobDetail",
         },
       },
-    {
+      {
         $project: {
           "buyerDetail.password": 0,
           "buyerDetail.email": 0,
@@ -196,8 +195,7 @@ router.get("/buyer/:userId", async (req, res) => {
           "sellerDetail.phoneNumber": 0,
         },
       },
-    
-    ])
+    ]);
 
     res.status(200).json(projects);
   } catch (err) {
@@ -205,10 +203,12 @@ router.get("/buyer/:userId", async (req, res) => {
   }
 });
 
-// get all projects 
+// get all projects
 router.get("/", async (req, res) => {
   try {
-    const projects = await Project.find().populate("jobId", "proposalId");
+    const projects = await Project.find()
+      .populate("jobId")
+      .populate("proposalId");
 
     res.status(200).json(projects);
   } catch (err) {
@@ -216,9 +216,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-// update  project status 
+// update  project status
 router.put("/:id", async (req, res) => {
- try {
+  try {
     const project = await Project.findByIdAndUpdate(req.params.id, {
       $set: req.body,
     });
@@ -230,9 +230,9 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// add  project reviews 
+// add  project reviews
 router.put("/:id/review", async (req, res) => {
- try {
+  try {
     const project = await Project.findByIdAndUpdate(req.params.id, {
       $set: req.body,
     });
@@ -241,6 +241,20 @@ router.put("/:id/review", async (req, res) => {
     res.status(200).send("Project Details Updated Successfully!");
   } catch (error) {
     res.status(500).send(error.message);
+  }
+});
+
+// get all reviews of user
+router.get("/:id/reviews", async (req, res) => {
+  try {
+    const projects = await Project.find({
+      buyerId: req.params.id,
+      status: "Completed",
+    }).populate("jobId", "headline budget ");
+
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 module.exports = router;
