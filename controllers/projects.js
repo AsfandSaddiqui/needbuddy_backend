@@ -244,7 +244,7 @@ router.put("/:id/review", async (req, res) => {
   }
 });
 
-// get all reviews of user
+// get all reviews of buyer
 router.get("/:id/reviews", async (req, res) => {
   try {
     const projects = await Project.find({
@@ -257,4 +257,29 @@ router.get("/:id/reviews", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+// get all reviews of seller
+router.get("/:id/reviews/seller", async (req, res) => {
+  //searching for seller against user Id
+  let seller;
+  try {
+    seller = await Seller.findOne({ userId: req.params.id });
+    if (!seller)
+      return res.status(200).send("No Seller Exist with this User ID!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+
+  try {
+    const projects = await Project.find({
+      sellerId: seller._id,
+      status: "Completed",
+    }).populate("jobId", "headline budget ");
+
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 module.exports = router;
