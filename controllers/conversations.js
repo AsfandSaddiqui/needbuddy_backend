@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
       senderId: req.body.senderId,
       receiverId: req.body.receiverId,
     });
-    
+
     if (result) return res.status(400).send("Conversation Already Exist");
   } catch (e) {
     console.log(e.message);
@@ -60,9 +60,14 @@ router.get("/find/:senderId/:receiverId", async (req, res) => {
 // get all conversation of sender
 router.get("/find/:senderId/", async (req, res) => {
   try {
-    const conversation = await Conversation.find({ $or: [ { senderId: req.params.senderId }, {receiverId: req.params.senderId } ] }
-      
-    ).populate("receiverId", "username avatar _id ");
+    const conversation = await Conversation.find({
+      $or: [
+        { senderId: req.params.senderId },
+        { receiverId: req.params.senderId },
+      ],
+    })
+      .populate("receiverId", "username avatar _id ")
+      .populate("senderId", "username avatar _id");
 
     res.status(200).json(conversation);
   } catch (err) {
