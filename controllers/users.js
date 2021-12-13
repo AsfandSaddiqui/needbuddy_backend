@@ -73,10 +73,9 @@ router.get("/reset-password/:email", async (req, res) => {
     const token = generatePasswordToken(user._id);
     //closed for testing purpose
     const url = `https://needbuddy.herokuapp.com/reset-password`;
-    const isSend = await passwordReset(user.email, url);
-    console.log(isSend);
+    passwordReset(user.email, url);
     //sendig response back
-    if (isSend) return res.status(200).send(token);
+    return res.status(200).send(token);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -161,9 +160,14 @@ router.post("/", async (req, res) => {
     const result = await user.save();
 
     const url = generateToken(user.username);
-    //closed for testing purpose
-    // if (result) verifyEmail(user.email, url);
-    res.status(201).send("user created Successfully!");
+
+    if (result) verifyEmail(user.email, url);
+
+    res
+      .status(201)
+      .send(
+        "User created Successfully, Verify your Email for using our application "
+      );
   } catch (err) {
     res.status(500).send(err.message);
   }

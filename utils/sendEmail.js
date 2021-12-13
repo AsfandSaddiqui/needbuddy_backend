@@ -1,20 +1,9 @@
-const nodemailer = require("nodemailer");
-const { google } = require("googleapis");
-const mailGun = require("nodemailer-mailgun-transport");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const verifyEmail = async (email, url) => {
-  const auth = {
-    auth: {
-      api_key: process.env.MAILGUN_API_KEY,
-      domain: process.env.MAILGUN_DOMAIN,
-    },
-  };
-
-  // Step 2
-  let transport = nodemailer.createTransport(mailGun(auth));
-
   const mailOptions = {
-    from: "NeedBuddy <hasnainmohiuddin99@gmail.com>",
+    from: "hasnainmohiuddin99@gmail.com",
     to: `${email}`,
     subject: "Email Verification",
     text: "Verifiy Your Email",
@@ -81,29 +70,21 @@ const verifyEmail = async (email, url) => {
   };
 
   //sending Email
-  try {
-    const result = await transport.sendMail(mailOptions);
-    if (result) return true;
-  } catch (e) {
-    return e.message;
-  }
+
+  sgMail
+    .send(mailOptions)
+    .then(() => {
+      console.log("Email sent");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 
 const passwordReset = async (email, url) => {
-  const auth = {
-    auth: {
-      api_key: process.env.MAILGUN_API_KEY,
-      domain: process.env.MAILGUN_DOMAIN,
-    },
-  };
-
-  // Step 2
-  let transport = nodemailer.createTransport(mailGun(auth));
-
-  // Step 3
-  let mailOptions = {
-    from: "NeedBuddy <hasnainmohiuddin99@gmail.com>",
+  let msg = {
     to: `${email}`,
+    from: "NeedBuddy <hasnainmohiuddin99@gmail.com>",
     subject: "Password Reset",
     text: "Change your Password",
     html: `<div style="box-sizing:border-box;display:block;max-width:600px;margin:0 auto;padding:10px"><span style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;width:0">Password Reset.</span>
@@ -175,12 +156,14 @@ const passwordReset = async (email, url) => {
   };
 
   //sending Email
-  try {
-    const result = await transport.sendMail(mailOptions);
-    if (result) return true;
-  } catch (e) {
-    return e.message;
-  }
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log("Email sent");
+    })
+    .catch((error) => {
+      console.error(error.message);
+    });
 };
 
 module.exports = { verifyEmail, passwordReset };
