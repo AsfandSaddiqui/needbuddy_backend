@@ -45,8 +45,9 @@ router.post("/", async (req, res) => {
   try {
     const result = await user.save();
     const url = generateToken(user.username);
-    //closed for testing purpose
-    // if (result) verifyEmail(user.email, url);
+
+    //Email verification
+    if (result) verifyEmail(user.email, url);
     res.status(201).send("user created Successfully!");
   } catch (err) {
     res.status(500).send(err.message);
