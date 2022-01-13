@@ -18,16 +18,13 @@ module.exports = function (io) {
 
     //take userId and socketId from user
     socket.on("addUser", (userId) => {
-    
       addUser(userId, socket.id);
       // io.emit("getUsers", users);
     });
 
     //send and get message
     socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-      console.log(receiverId)
       const user = getUser(receiverId);
-      console.log("this is user",user)
       if (user != undefined) {
         io.to(user.socketId).emit("getMessage", {
           senderId,
