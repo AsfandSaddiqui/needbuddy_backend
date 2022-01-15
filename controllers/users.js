@@ -6,10 +6,10 @@ const { verifyEmail, passwordReset } = require("../utils/sendEmail");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
-//get all users
+//get all active users
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({ isActive: true });
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error.message);
@@ -83,17 +83,34 @@ router.get("/reset-password/:email", async (req, res) => {
 
 //update Password
 router.put("/update-password/:id", async (req, res) => {
-  const salt = await bcrypt.genSalt(10);
-  let password = await bcrypt.hash(req.body.password, salt);
+  let user;
+  try {
+    user = await User.findOne({ _id: req.params.id });
+    if (!user) return res.status(404).send("User Doesn't Exist");
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
 
   try {
+    //validating password using bcrypt
+    let validPassword = await bcrypt.compare(
+      req.body.oldPassword,
+      user.password
+    );
+    if (!validPassword) return res.status(404).send("Password is invalid");
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    let password = await bcrypt.hash(req.body.newPassword, salt);
+
     const user = await User.findByIdAndUpdate(req.params.id, {
       $set: {
         password,
       },
     });
-    if (!user) return res.status(404).send("No User Exist with this ID!");
-
     //sendig response back
     res.status(200).send("Password Updated Successfully!");
   } catch (error) {
@@ -101,22 +118,19 @@ router.put("/update-password/:id", async (req, res) => {
   }
 });
 
-//delete a user
+//deactivate a user
 router.delete("/:id", async (req, res) => {
   try {
-    //checking if user exist
-    const result = await User.findOne({ _id: req.params.id });
-    if (!result) return res.status(404).send("No User Exist with this ID!");
-
-    //delete user from database
-    try {
-      const result = await User.deleteOne({ _id: req.params.id });
-      return res.status(200).send("User deleted Successfully");
-    } catch (e) {
-      console.log(e.message);
-    }
-  } catch (e) {
-    console.log(e.message);
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      $set: {
+        isActive: false,
+      },
+    });
+    if (!user) return res.status(404).send("No User Exist with this ID!");
+    //sendig user back
+    res.status(200).send("User Deactivate Successfully!");
+  } catch (error) {
+    res.status(500).send(error.message);
   }
 });
 
