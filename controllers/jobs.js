@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
 });
 
 //find all jobs of user
-router.get("/:id", async (req, res) => {
+router.get("/find-all/:id", async (req, res) => {
   let pageNumber = 1;
   const pageSize = 10;
   if (req.query.pageNumber) pageNumber = req.query.pageNumber;
@@ -47,6 +47,31 @@ router.get("/find/:id", async (req, res) => {
     res.status(200).send(job);
   } catch (error) {
     res.status(500).send(error.message);
+  }
+});
+
+//search
+router.get("/search", async (req, res) => {
+  query = req.query.query;
+  try {
+    let regex = new RegExp(query, "i");
+    // const filterd = await Job.find({
+    //   $or: [{ headline: regex }, { description: regex }],
+    // });
+
+    const result = await Job.aggregate([
+      {
+        $search: {
+          index: "testing",
+          text: {
+            query: query,
+          },
+        },
+      },
+    ]);
+    return res.status(200).send(result);
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 });
 
