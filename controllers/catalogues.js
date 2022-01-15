@@ -49,13 +49,30 @@ router.get("/find", async (req, res) => {
   }
 });
 
-//find  job by ID
+//find catalogue by ID
 router.get("/find/:id", async (req, res) => {
   try {
-    const catalogue = await ProjectCatalogue.findById(req.params.id).populate(
-      "userId"
-    );
+    const catalogue = await ProjectCatalogue.find({
+      _id: req.params.id,
+      isActive: true,
+    }).populate("userId");
+    if (!catalogue) return res.status(404).send("No Catalogue Existed!");
     res.status(200).send(catalogue);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+//Delete catalogue by ID
+router.put("/deactive/:id", async (req, res) => {
+  try {
+    const catalogue = await ProjectCatalogue.findByIdAndUpdate(req.params.id, {
+      $set: {
+        isActive: false,
+      },
+    });
+    if (!catalogue) return res.status(404).send("catalogue doesn't exist");
+    return res.status(200).send("catalogue Deleted successfully");
   } catch (error) {
     res.status(500).send(error.message);
   }
