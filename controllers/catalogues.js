@@ -78,4 +78,16 @@ router.put("/deactive/:id", async (req, res) => {
   }
 });
 
+//update catalogue by ID
+router.put("/update/:id", async (req, res) => {
+  try {
+    const catalogue = await ProjectCatalogue.findByIdAndUpdate(req.params.id, {
+      $set: req.body,
+    });
+    if (!catalogue) return res.status(404).send("catalogue doesn't exist");
+    return res.status(200).send("catalogue updated successfully");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 module.exports = router;

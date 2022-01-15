@@ -54,17 +54,14 @@ router.get("/find/:id", async (req, res) => {
 router.get("/search", async (req, res) => {
   query = req.query.query;
   try {
-    let regex = new RegExp(query, "i");
-    // const filterd = await Job.find({
-    //   $or: [{ headline: regex }, { description: regex }],
-    // });
-
     const result = await Job.aggregate([
       {
         $search: {
           index: "testing",
           text: {
             query: query,
+            path: ["headline", "description"],
+            fuzzy: {},
           },
         },
       },
