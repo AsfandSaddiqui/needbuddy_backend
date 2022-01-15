@@ -120,13 +120,28 @@ router.put("/update-password/:id", async (req, res) => {
 
 //deactivate a user
 router.delete("/:id", async (req, res) => {
+  let user;
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, {
+    user = await User.findOne({ _id: req.params.id });
+    if (!user) return res.status(404).send("User Doesn't Exist");
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+  try {
+    //validating password using bcrypt
+    let validPassword = await bcrypt.compare(req.body.password, user.password);
+    if (!validPassword) return res.status(404).send("Password doesn't match");
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(req.params.id, {
       $set: {
         isActive: false,
       },
     });
-    if (!user) return res.status(404).send("No User Exist with this ID!");
     //sendig user back
     res.status(200).send("User Deactivate Successfully!");
   } catch (error) {
