@@ -137,11 +137,15 @@ router.put("/deactive/:id", async (req, res) => {
   }
 
   try {
-    user = await User.findOneAndUpdate(req.params.id, {
-      $set: {
-        isActive: false,
-      },
-    });
+    userUpdate = await User.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: {
+          isActive: false,
+        },
+      }
+    );
+    console.log(userUpdate);
     //sendig user back
     res.status(200).send("User Deactivate Successfully!");
   } catch (error) {
