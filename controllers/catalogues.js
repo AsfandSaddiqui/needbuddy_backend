@@ -1,6 +1,6 @@
 //users routes defined here
 const express = require("express");
-const { validate, ProjectCatalogue } = require("../models/ProjectCatalogue");
+const { validate, ProjectCatalogue } = require("../models/projectCatalogue");
 const router = express.Router();
 
 //create a catalogue
