@@ -119,7 +119,7 @@ router.put("/update-password/:id", async (req, res) => {
 });
 
 //deactivate a user
-router.delete("/:id", async (req, res) => {
+router.put("/deactive/:id", async (req, res) => {
   let user;
   try {
     user = await User.findOne({ _id: req.params.id });
@@ -137,7 +137,7 @@ router.delete("/:id", async (req, res) => {
   }
 
   try {
-    const user = await User.findOneAndUpdate(req.params.id, {
+    user = await User.findOneAndUpdate(req.params.id, {
       $set: {
         isActive: false,
       },

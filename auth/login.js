@@ -12,7 +12,12 @@ router.post("/", async (req, res) => {
   //validaing if user already existed
   try {
     const user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status(404).send("Invalid Username or Password");
+    if (user) {
+      if (user.isActive === false)
+        res.status(404).send("User Account Doesn't Exist contact Admin");
+    } else {
+      return res.status(404).send("Invalid Username or Password");
+    }
 
     //validating password using bcrypt
     let validPassword = await bcrypt.compare(req.body.password, user.password);
