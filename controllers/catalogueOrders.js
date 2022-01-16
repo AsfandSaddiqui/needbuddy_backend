@@ -72,3 +72,5 @@ router.get("/catalogue/:id/reviews", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+module.exports = router;
