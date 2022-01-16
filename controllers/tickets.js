@@ -64,7 +64,7 @@ router.get("/find/:id", async (req, res) => {
   if (req.query.pageNumber) pageNumber = req.query.pageNumber;
 
   try {
-    const ticket = await Ticket.find({ _id: req.params.id })
+    const ticket = await Ticket.find({ userId: req.params.id })
       .skip((pageNumber - 1) * pageSize)
       .limit(10)
       .sort({ $natural: -1 });

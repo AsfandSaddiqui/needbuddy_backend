@@ -79,6 +79,7 @@ router.put("/deactive/:id", async (req, res) => {
 
 //search
 router.get("/search", async (req, res) => {
+  let value = [{ isActive: true }, { category: "Laptops" }];
   query = req.query.query;
   try {
     const result = await ProjectCatalogue.aggregate([
@@ -92,7 +93,7 @@ router.get("/search", async (req, res) => {
           },
         },
       },
-      { $match: { isActive: true } },
+      { $match: { $and: value } },
     ]);
     return res.status(200).send(result);
   } catch (error) {
