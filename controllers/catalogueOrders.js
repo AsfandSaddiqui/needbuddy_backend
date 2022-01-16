@@ -56,15 +56,14 @@ router.get("/find/buyer/:buyerId", async (req, res) => {
 });
 
 // update order status
-router.put("/:id", async (req, res) => {
+router.put("/status/:orderId", async (req, res) => {
   try {
-    const order = await CatalogueOrders.findByIdAndUpdate(req.params.id, {
+    const order = await CatalogueOrders.findByIdAndUpdate(req.params.orderId, {
       $set: {
         status: req.body.status,
       },
     });
-    if (!order)
-      return res.status(404).send("No Catalogue Order Exist with this ID!");
+    if (!order) return res.status(404).send("No Order Exist with this ID!");
     //sendig user back
     res.status(200).send("Order Status Updated Successfully!");
   } catch (error) {
