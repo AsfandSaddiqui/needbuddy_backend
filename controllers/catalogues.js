@@ -82,7 +82,7 @@ router.put("/deactive/:id", async (req, res) => {
 router.get("/search", async (req, res) => {
   query = req.query.query;
   try {
-    const result = await Job.aggregate([
+    const result = await ProjectCatalogue.aggregate([
       {
         $search: {
           index: "catalogueSearch",
@@ -126,4 +126,5 @@ router.put("/update/:id", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
 module.exports = router;
