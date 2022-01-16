@@ -40,7 +40,7 @@ router.get("/find-all/:id", async (req, res) => {
   }
 });
 
-//find  job by ID
+//find job by ID
 router.get("/find/:id", async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);

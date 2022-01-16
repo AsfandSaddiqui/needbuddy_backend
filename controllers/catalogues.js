@@ -78,6 +78,42 @@ router.put("/deactive/:id", async (req, res) => {
   }
 });
 
+//search
+router.get("/search", async (req, res) => {
+  query = req.query.query;
+  try {
+    const result = await Job.aggregate([
+      {
+        $search: {
+          index: "catalogueSearch",
+          text: {
+            query: query,
+            path: ["headline", "description"],
+            fuzzy: {},
+          },
+        },
+      },
+    ]);
+    return res.status(200).send(result);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+//find catalogue by userID
+router.get("/find/user-id/:id", async (req, res) => {
+  try {
+    const catalogue = await ProjectCatalogue.find({
+      userId: req.params.id,
+      isActive: true,
+    });
+    if (!catalogue) return res.status(404).send("No Catalogue Existed!");
+    res.status(200).send(catalogue);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 //update catalogue by ID
 router.put("/update/:id", async (req, res) => {
   try {
