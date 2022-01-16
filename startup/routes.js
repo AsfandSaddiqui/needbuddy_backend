@@ -11,6 +11,7 @@ const conversation = require("../controllers/conversations");
 const message = require("../controllers/messages");
 const catalogue = require("../controllers/catalogues");
 const catalogueOrders = require("../controllers/catalogueOrders");
+const tickets = require("../controllers/tickets");
 const register = require("../auth/register");
 const login = require("../auth/login");
 const emailVerify = require("../controllers/emailVerify");
@@ -29,6 +30,7 @@ module.exports = function (app, server) {
   app.use("/api/catalogue-orders", catalogueOrders);
   app.use("/api/conversation", conversation);
   app.use("/api/message", message);
+  app.use("/api/ticket", tickets);
   app.use("/auth/register", register);
   app.use("/auth/login", login);
   app.use("/verify", emailVerify);

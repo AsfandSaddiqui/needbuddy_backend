@@ -2,7 +2,6 @@
 const express = require("express");
 const { validate, ProjectCatalogue } = require("../models/projectCatalogue");
 const router = express.Router();
-
 //create a catalogue
 router.post("/", async (req, res) => {
   //validating body
@@ -113,8 +112,6 @@ router.get("/find/user-id/:id", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-
-//find review rating
 
 //update catalogue by ID
 router.put("/update/:id", async (req, res) => {

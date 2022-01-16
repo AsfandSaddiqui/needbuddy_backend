@@ -150,7 +150,7 @@ router.get("/seller/income/:userId", async (req, res) => {
         $group: {
           _id: "$sellerId",
           totalOrders: { $sum: 1 },
-          toalEarning: { $sum: "$jobs.budget" },
+          totalEarning: { $sum: "$jobs.budget" },
           avgRating: { $avg: "$buyerReview.rating" },
         },
       },
