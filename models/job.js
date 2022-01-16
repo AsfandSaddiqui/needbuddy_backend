@@ -25,7 +25,6 @@ const Job = mongoose.model(
       expertiseRequired: {
         type: String,
         maxlength: 20,
-        enum: ["Entry", "Intermediate", "Expert"],
         required: true,
       },
       budget: {

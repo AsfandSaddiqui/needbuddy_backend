@@ -14,6 +14,7 @@ router.post("/", async (req, res) => {
     catalogueId: req.body.catalogueId,
     specifications: req.body.specifications,
     buyerId: req.body.buyerId,
+    buyerReview: {},
   });
 
   //saving in database
@@ -76,7 +77,8 @@ router.put("/order/:orderId/review", async (req, res) => {
   try {
     const order = await CatalogueOrders.findByIdAndUpdate(req.params.orderId, {
       $set: {
-        buyerReview: req.body.buyerReview,
+        review: req.body.review,
+        rating: req.body.rating,
       },
     });
     if (!order) return res.status(404).send("No Order Exist with this ID!");
@@ -94,6 +96,20 @@ router.get("/catalogue/:id/reviews", async (req, res) => {
     const orders = await CatalogueOrders.find({
       catalogueId: req.params.id,
       status: catalogueStatus,
+    }).populate("buyerId");
+
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// get all review of buyers on particular catalogue
+router.get("/all-orders/:catalogueId/", async (req, res) => {
+  try {
+    const orders = await CatalogueOrders.find({
+      catalogueId: req.params.catalogueId,
+      status: "received",
     }).populate("buyerId");
 
     res.status(200).json(orders);

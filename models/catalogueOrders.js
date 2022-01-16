@@ -1,24 +1,23 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
-const reviewSchema = mongoose.Schema({
-  review: {
-    type: String,
-    minlength: 3,
-    maxlength: 300,
-    lowercase: true,
-  },
-  rating: {
-    type: Number,
-  },
-});
+const reviewSchema = mongoose.Schema({});
 
 //defining a model
 const CatalogueOrders = mongoose.model(
   "catalogue_orders",
   new mongoose.Schema(
     {
-      buyerReview: reviewSchema,
+      review: {
+        type: String,
+        minlength: 3,
+        maxlength: 300,
+        lowercase: true,
+      },
+      rating: {
+        type: Number,
+        default: 0,
+      },
 
       status: {
         type: String,
@@ -61,6 +60,8 @@ const validate = (order) => {
     catalogueId: Joi.required(),
     amount: Joi.number().required(),
     specifications: Joi.array(),
+    review: Joi.string(),
+    rating: Joi.number(),
   });
 
   return schema.validate(order);
