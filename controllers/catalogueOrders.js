@@ -27,19 +27,19 @@ router.post("/", async (req, res) => {
 });
 
 // get all order of particular catalogue
-router.get("/find/:catalogueId", async (req, res) => {
-  try {
-    const orders = await CatalogueOrders.find({
-      catalogueId: req.params.catalogueId,
-    });
-    if (!orders)
-      return res.status(404).send("No Catalogue Exist with this ID!");
-    //sendig user back
-    res.status(200).send(orders);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
+// router.get("/find/:catalogueId", async (req, res) => {
+//   try {
+//     const orders = await CatalogueOrders.find({
+//       catalogueId: req.params.catalogueId,
+//     });
+//     if (!orders)
+//       return res.status(404).send("No Catalogue Exist with this ID!");
+//     //sendig user back
+//     res.status(200).send(orders);
+//   } catch (error) {
+//     res.status(500).send(error.message);
+//   }
+// });
 
 // get all order of particular buyer
 router.get("/find/buyer/:buyerId", async (req, res) => {
@@ -118,4 +118,44 @@ router.get("/all-orders/:catalogueId/", async (req, res) => {
   }
 });
 
+// get all order of particular catalogue
+router.get("/find", async (req, res) => {
+  try {
+    const details = await CatalogueOrders.aggregate([
+      {
+        $group: {
+          _id: "$catalogueId",
+          totalOrders: { $sum: 1 },
+          averageRating: { $avg: "$rating" },
+        },
+      },
+    ]);
+    if (!details)
+      return res.status(404).send("No Catalogue Exist with this ID!");
+    //sendig user back
+    res.status(200).send(details);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get("/find/catalogue/:id", async (req, res) => {
+  try {
+    const details = await CatalogueOrders.aggregate([
+      {
+        $group: {
+          _id: "$catalogueId",
+          totalOrders: { $sum: 1 },
+          averageRating: { $avg: "$rating" },
+        },
+      },
+    ]);
+    if (!details)
+      return res.status(404).send("No Catalogue Exist with this ID!");
+    //sendig user back
+    res.status(200).send(details);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 module.exports = router;
