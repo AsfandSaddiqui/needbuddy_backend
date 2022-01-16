@@ -92,6 +92,7 @@ router.get("/search", async (req, res) => {
           },
         },
       },
+      { $match: { isActive: true } },
     ]);
     return res.status(200).send(result);
   } catch (error) {
