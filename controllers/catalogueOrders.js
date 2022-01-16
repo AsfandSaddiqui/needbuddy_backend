@@ -40,6 +40,21 @@ router.get("/find/:catalogueId", async (req, res) => {
   }
 });
 
+// get all order of particular buyer
+router.get("/find/buyer/:buyerId", async (req, res) => {
+  try {
+    const orders = await CatalogueOrders.find({
+      buyerId: req.params.buyerId,
+    }).populate("catalogueId");
+    if (!orders)
+      return res.status(404).send("No Catalogue Exist with this ID!");
+    //sendig user back
+    res.status(200).send(orders);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 // update order status
 router.put("/:id", async (req, res) => {
   try {
