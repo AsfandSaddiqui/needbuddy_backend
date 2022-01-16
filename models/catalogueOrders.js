@@ -1,8 +1,6 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
-const reviewSchema = mongoose.Schema({});
-
 //defining a model
 const CatalogueOrders = mongoose.model(
   "catalogue_orders",

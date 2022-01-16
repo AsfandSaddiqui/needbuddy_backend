@@ -4,6 +4,7 @@ const { validate, Proposal, stringToObject } = require("../models/proposal");
 const { User } = require("../models/user");
 const { Seller } = require("../models/seller");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 //get all proposals
 router.get("/", async (req, res) => {
@@ -73,16 +74,15 @@ router.get("/buyer/:id", async (req, res) => {
 
 //find a proposals using seller ID
 router.get("/seller/:id", async (req, res) => {
-
- //searching for seller against user Id
+  //searching for seller against user Id
   let seller;
   try {
-    seller = await Seller.findOne({userId:req.params.id});
-    if (!seller)return res.status(404).send("No Seller Exist with this User ID!");
+    seller = await Seller.findOne({ userId: req.params.id });
+    if (!seller)
+      return res.status(404).send("No Seller Exist with this User ID!");
   } catch (error) {
     res.status(500).send(error.message);
   }
-
 
   try {
     const proposal = await Proposal.aggregate([
@@ -130,9 +130,29 @@ router.get("/seller/:id", async (req, res) => {
 //find proposal
 router.get("/:id", async (req, res) => {
   try {
-    const proposal = await Proposal.findById( req.params.id )
-      if(!proposal) return res.status(200).send("No proposal Exist with this ID!");
+    const proposal = await Proposal.findById(req.params.id);
+    if (!proposal)
+      return res.status(200).send("No proposal Exist with this ID!");
     res.status(200).send(proposal);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+//find proposal by  jobId
+router.get("/job/:id", async (req, res) => {
+  id = mongoose.Types.ObjectId(req.params.id);
+  try {
+    const details = await Proposal.aggregate([
+      { $match: { jobId: id } },
+      {
+        $group: {
+          _id: "$jobId",
+          totalProposal: { $sum: 1 },
+        },
+      },
+    ]);
+    return res.status(200).send(details);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -196,7 +216,7 @@ router.post("/", async (req, res) => {
   }
 
   const id = seller[0]._id.toString();
-  console.log("Id is here",id)
+  console.log("Id is here", id);
   //creating new proposal
   const proposal = new Proposal({
     coverLetter: req.body.coverLetter,

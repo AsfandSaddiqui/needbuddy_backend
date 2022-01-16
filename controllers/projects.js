@@ -1,6 +1,7 @@
 const express = require("express");
 const { validate, Project, stringToObject } = require("../models/project");
 const { Seller } = require("../models/seller");
+const { Job } = require("../models/job");
 const router = express.Router();
 
 //create a projects
@@ -108,6 +109,48 @@ router.get("/seller/:userId", async (req, res) => {
           "sellerDetail.accountType": 0,
           "sellerDetail.isActive": 0,
           "sellerDetail.phoneNumber": 0,
+        },
+      },
+    ]);
+
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// get seller project income
+router.get("/seller/income/:userId", async (req, res) => {
+  //searching for seller against user Id
+  let seller;
+  try {
+    seller = await Seller.findOne({ _id: req.params.userId });
+    if (!seller)
+      return res.status(404).send("No Seller Exist with this User ID!");
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+  //finding total orders
+  try {
+    const projects = await Project.aggregate([
+      { $match: { $and: [{ sellerId: seller._id }, { status: "Completed" }] } },
+      {
+        $lookup: {
+          from: "jobs",
+          localField: "jobId",
+          foreignField: "_id",
+          as: "jobs",
+        },
+      },
+      {
+        $unwind: "$jobs",
+      },
+      {
+        $group: {
+          _id: "$sellerId",
+          totalOrders: { $sum: 1 },
+          toalEarning: { $sum: "$jobs.budget" },
+          avgRating: { $avg: "$buyerReview.rating" },
         },
       },
     ]);
