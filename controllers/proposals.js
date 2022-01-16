@@ -139,7 +139,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//find proposal by  jobId
+//find proposal by  jobId and return total proposal
 router.get("/job/:id", async (req, res) => {
   id = mongoose.Types.ObjectId(req.params.id);
   try {

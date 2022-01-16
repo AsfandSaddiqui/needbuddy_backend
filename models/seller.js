@@ -8,7 +8,7 @@ const Seller = mongoose.model(
     {
       headline: {
         type: String,
-        maxlength: 25,
+        maxlength: 100,
       },
       description: {
         type: String,
@@ -18,11 +18,10 @@ const Seller = mongoose.model(
       expertise: { type: String },
       expertiseLevel: {
         type: String,
-        maxlength: 20,
-        enum: ["Entry", "Intermediate", "Expert"],
+        maxlength: 50,
       },
-      skills: [{ type: String }],
-      badge: { type: String, enum: ["Top Rated", "Top Rated Plus", "Expert"] },
+      skills: { type: String },
+      badge: { type: String },
       userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
@@ -35,12 +34,12 @@ const Seller = mongoose.model(
 //User schema validation method to validate incoming data
 const validateSeller = (seller) => {
   const schema = Joi.object({
-    headline: Joi.string().min(3).max(25),
+    headline: Joi.string().min(3).max(100),
     description: Joi.string().min(3).max(1500),
     expertise: Joi.string(),
-    expertiseLevel: Joi.string().max(20),
-    skills: Joi.array(),
-    badge: Joi.string().max(20),
+    expertiseLevel: Joi.string().max(50),
+    skills: Joi.string(),
+    badge: Joi.string(),
     address: Joi.string().max(255),
     city: Joi.string().min(4).max(25),
     zipCode: Joi.number(),

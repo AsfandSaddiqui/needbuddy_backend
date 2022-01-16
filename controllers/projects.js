@@ -124,7 +124,7 @@ router.get("/seller/income/:userId", async (req, res) => {
   //searching for seller against user Id
   let seller;
   try {
-    seller = await Seller.findOne({ _id: req.params.userId });
+    seller = await Seller.findOne({ userId: req.params.userId });
     if (!seller)
       return res.status(404).send("No Seller Exist with this User ID!");
   } catch (error) {
