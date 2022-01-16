@@ -56,4 +56,22 @@ router.get("/find", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+//get user tickets
+router.get("/find/:id", async (req, res) => {
+  let pageNumber = 1;
+  const pageSize = 10;
+  if (req.query.pageNumber) pageNumber = req.query.pageNumber;
+
+  try {
+    const ticket = await Ticket.find({ _id: req.params.id })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(10)
+      .sort({ $natural: -1 });
+
+    res.status(200).send(ticket);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 module.exports = router;

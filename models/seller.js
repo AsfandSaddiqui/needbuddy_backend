@@ -14,8 +14,6 @@ const Seller = mongoose.model(
         type: String,
         maxlength: 1500,
       },
-
-      expertise: { type: String },
       expertiseLevel: {
         type: String,
         maxlength: 50,
