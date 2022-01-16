@@ -88,7 +88,7 @@ router.get("/search", async (req, res) => {
           index: "catalogueSearch",
           text: {
             query: query,
-            path: ["headline", "description"],
+            path: ["headline", "description", "category"],
             fuzzy: {},
           },
         },
