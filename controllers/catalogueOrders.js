@@ -25,6 +25,21 @@ router.post("/", async (req, res) => {
   }
 });
 
+// get all order of particular catalogue
+router.get("/find/:catalogueId", async (req, res) => {
+  try {
+    const orders = await CatalogueOrders.find({
+      catalogueId: req.params.catalogueId,
+    });
+    if (!orders)
+      return res.status(404).send("No Catalogue Exist with this ID!");
+    //sendig user back
+    res.status(200).send(orders);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 // update order status
 router.put("/:id", async (req, res) => {
   try {
