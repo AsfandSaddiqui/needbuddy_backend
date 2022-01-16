@@ -114,6 +114,8 @@ router.get("/find/user-id/:id", async (req, res) => {
   }
 });
 
+//find review rating
+
 //update catalogue by ID
 router.put("/update/:id", async (req, res) => {
   try {

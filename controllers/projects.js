@@ -3,6 +3,7 @@ const { validate, Project, stringToObject } = require("../models/project");
 const { Seller } = require("../models/seller");
 const { Job } = require("../models/job");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 //create a projects
 router.post("/", async (req, res) => {
@@ -134,6 +135,41 @@ router.get("/seller/income/:userId", async (req, res) => {
   try {
     const projects = await Project.aggregate([
       { $match: { $and: [{ sellerId: seller._id }, { status: "Completed" }] } },
+      {
+        $lookup: {
+          from: "jobs",
+          localField: "jobId",
+          foreignField: "_id",
+          as: "jobs",
+        },
+      },
+      {
+        $unwind: "$jobs",
+      },
+      {
+        $group: {
+          _id: "$sellerId",
+          totalOrders: { $sum: 1 },
+          toalEarning: { $sum: "$jobs.budget" },
+          avgRating: { $avg: "$buyerReview.rating" },
+        },
+      },
+    ]);
+
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// get buyer total spending income
+router.get("/buyer/spending/:userId", async (req, res) => {
+  //searching for seller against user Id
+  let id = mongoose.Types.ObjectId(req.params.userId);
+  //finding total orders
+  try {
+    const projects = await Project.aggregate([
+      { $match: { $and: [{ buyerId: id }, { status: "Completed" }] } },
       {
         $lookup: {
           from: "jobs",
