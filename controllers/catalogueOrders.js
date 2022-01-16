@@ -1,6 +1,7 @@
 const express = require("express");
 const { validate, CatalogueOrders } = require("../models/catalogueOrders");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 //create a catalogue order
 router.post("/", async (req, res) => {
@@ -27,19 +28,19 @@ router.post("/", async (req, res) => {
 });
 
 // get all order of particular catalogue
-// router.get("/find/:catalogueId", async (req, res) => {
-//   try {
-//     const orders = await CatalogueOrders.find({
-//       catalogueId: req.params.catalogueId,
-//     });
-//     if (!orders)
-//       return res.status(404).send("No Catalogue Exist with this ID!");
-//     //sendig user back
-//     res.status(200).send(orders);
-//   } catch (error) {
-//     res.status(500).send(error.message);
-//   }
-// });
+router.get("/find/:catalogueId", async (req, res) => {
+  try {
+    const orders = await CatalogueOrders.find({
+      catalogueId: req.params.catalogueId,
+    });
+    if (!orders)
+      return res.status(404).send("No Catalogue Exist with this ID!");
+    //sendig user back
+    res.status(200).send(orders);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 // get all order of particular buyer
 router.get("/find/buyer/:buyerId", async (req, res) => {
@@ -140,8 +141,10 @@ router.get("/find", async (req, res) => {
 });
 
 router.get("/find/catalogue/:id", async (req, res) => {
+  id = mongoose.Types.ObjectId(req.params.id);
   try {
     const details = await CatalogueOrders.aggregate([
+      { $match: { $and: [{ catalogueId: id }, { status: "received" }] } },
       {
         $group: {
           _id: "$catalogueId",
@@ -152,7 +155,7 @@ router.get("/find/catalogue/:id", async (req, res) => {
     ]);
     if (!details)
       return res.status(404).send("No Catalogue Exist with this ID!");
-    //sendig user back
+    //sendig result back
     res.status(200).send(details);
   } catch (error) {
     res.status(500).send(error.message);
