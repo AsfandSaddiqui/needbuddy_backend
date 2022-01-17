@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
 // update ticket status
 router.put("/status/:ticketId", async (req, res) => {
   try {
-    const ticket = await Ticket.findByIdAndUpdate(req.params.id, {
+    const ticket = await Ticket.findByIdAndUpdate(req.params.ticketId, {
       $set: {
         status: req.body.status,
       },
