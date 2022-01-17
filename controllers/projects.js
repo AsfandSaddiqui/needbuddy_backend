@@ -197,6 +197,46 @@ router.get("/buyer/spending/:userId", async (req, res) => {
   }
 });
 
+//get the complete Projects Analytics
+router.get("/analytics/project", async (req, res) => {
+  const total = await Project.count("projectId");
+  const total_completed = await Project.count({ status: "Completed" });
+  const total_active = await Project.count({ status: "Ongoing" });
+  const projects_completed = await Project.find({
+    status: "Completed",
+  }).populate("jobId", "budget");
+  const projects_ongoing = await Project.find({ status: "Ongoing" }).populate(
+    "jobId",
+    "budget"
+  );
+  const revenue = projects_completed.reduce(
+    (a, job) => job.jobId.budget + a,
+    0
+  );
+  const revenue_expected = projects_ongoing.reduce(
+    (a, job) => job.jobId.budget + a,
+    0
+  );
+
+  res.send([
+    total,
+    total_completed,
+    total_active,
+    revenue,
+    revenue_expected,
+    all,
+  ]);
+});
+
+//get the complete job Analytics
+router.get("/analytics/job", async (req, res) => {
+  const total = await Project.count("jobId");
+  const total_active = await Project.count({ isActive: "ture" });
+  const total_inactive = await Project.count({ isActive: "false" });
+
+  res.send([total, total_active, total_inactive]);
+});
+
 // get all projects of buyers
 router.get("/buyer/:userId", async (req, res) => {
   //converting string Id into objectID
