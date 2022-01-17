@@ -161,17 +161,17 @@ router.post("/steps", async (req, res) => {
   }
 
   //creating new job
-  const job = new Job({
-    headline: req.body.headline,
-    description: req.body.description,
-    expertiseRequired: req.body.expertiseRequired,
-    timeRequired: req.body.timeRequired,
-    skillsRequired: req.body.skillsRequired,
-    attachments: req.body.attachments,
-    isActive: req.body.isActive,
-    budget: req.body.budget,
-    userId: req.body.userId,
-  });
+  // const job = new Job({
+  //   headline: req.body.headline,
+  //   description: req.body.description,
+  //   expertiseRequired: req.body.expertiseRequired,
+  //   timeRequired: req.body.timeRequired,
+  //   skillsRequired: req.body.skillsRequired,
+  //   attachments: req.body.attachments,
+  //   isActive: req.body.isActive,
+  //   budget: req.body.budget,
+  //   userId: req.body.userId,
+  // });
 
   const token = jwt.sign(
     {
@@ -188,8 +188,8 @@ router.post("/steps", async (req, res) => {
 
   //saving in database
   try {
-    const result = await job.save();
-    if (result)
+    // const result = await job.save();
+    if (user)
       return res
         .status(201)
         .json({ token, Message: "Steps Completed Successfully" });

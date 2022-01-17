@@ -86,7 +86,7 @@ const validate = (job) => {
     headline: Joi.string().min(3).max(25).required(),
     description: Joi.string().min(3).max(1500).required(),
     expertiseRequired: Joi.string().max(25).required(),
-    skillsRequired: Joi.array().items(Joi.string()).required(),
+    skillsRequired: Joi.string().required(),
     timeRequired: Joi.string().min(6).max(20).required(),
     attachments: Joi.array().items(Joi.string()),
     isActive: Joi.string().min(6).max(20),
