@@ -3,7 +3,7 @@ sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const verifyEmail = async (email, url) => {
   const mailOptions = {
-    from: "hasnainmohiuddin99@gmail.com",
+    from: "NeedBuddy <hasnainmohiuddin99@gmail.com>",
     to: `${email}`,
     subject: "Email Verification",
     text: "Verifiy Your Email",

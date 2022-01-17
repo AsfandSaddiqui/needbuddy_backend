@@ -10,7 +10,7 @@ const generateToken = (username) => {
   const token = jwt.sign({ username }, process.env.EMAIL_SECRET, {
     expiresIn: "1h",
   });
-  const url = `http://localhost:5000/verify/${token}`;
+  const url = `https://needbuddy-backend.herokuapp.com/verify/${token}`;
   return url;
 };
 

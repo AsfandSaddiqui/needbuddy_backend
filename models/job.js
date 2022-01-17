@@ -11,32 +11,27 @@ const Job = mongoose.model(
         minlength: 3,
         maxlength: 100,
         lowercase: true,
-        required: true,
       },
       description: {
         type: String,
         minlength: 3,
         maxlength: 1500,
         lowercase: true,
-        required: true,
       },
-      timeRequired: { type: String, lowercase: true, required: true },
+      timeRequired: { type: String, lowercase: true },
 
       expertiseRequired: {
         type: String,
         maxlength: 20,
-        required: true,
       },
       budget: {
         type: Number,
         min: 1,
-        required: true,
       },
 
       skillsRequired: {
         type: String,
         minlength: 3,
-        required: true,
       },
 
       attachments: [
@@ -60,14 +55,14 @@ const Job = mongoose.model(
 //Job schema validation method to validate incoming data
 const validateStep = (job) => {
   const schema = Joi.object({
-    headline: Joi.string().min(3).max(100).required(),
-    description: Joi.string().min(3).max(1500).required(),
-    expertiseRequired: Joi.string().max(25).required(),
-    skillsRequired: Joi.string().required(),
-    timeRequired: Joi.string().min(6).max(20).required(),
+    headline: Joi.string().min(3).max(100),
+    description: Joi.string().min(3).max(1500),
+    expertiseRequired: Joi.string().max(25),
+    skillsRequired: Joi.string(),
+    timeRequired: Joi.string().min(6).max(20),
     attachments: Joi.array().items(Joi.string()),
     isActive: Joi.boolean,
-    budget: Joi.number().min(1).required(),
+    budget: Joi.number().min(1),
     address: Joi.string().max(255),
     city: Joi.string().min(4).max(25),
     zipCode: Joi.number(),
@@ -83,14 +78,14 @@ const validateStep = (job) => {
 
 const validate = (job) => {
   const schema = Joi.object({
-    headline: Joi.string().min(3).max(25).required(),
-    description: Joi.string().min(3).max(1500).required(),
-    expertiseRequired: Joi.string().max(25).required(),
-    skillsRequired: Joi.string().required(),
-    timeRequired: Joi.string().min(6).max(20).required(),
+    headline: Joi.string().min(3).max(25),
+    description: Joi.string().min(3).max(1500),
+    expertiseRequired: Joi.string().max(25),
+    skillsRequired: Joi.string(),
+    timeRequired: Joi.string().min(6).max(20),
     attachments: Joi.array().items(Joi.string()),
     isActive: Joi.string().min(6).max(20),
-    budget: Joi.number().min(1).required(),
+    budget: Joi.number().min(1),
     userId: Joi.required(),
   });
 
